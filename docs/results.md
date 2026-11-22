@@ -6,12 +6,15 @@ The reference latency and closed-loop board tests use `lerobot/smolvla_libero` a
 
 Measurements used a Qualcomm IQ-9075 EVK with eight Cortex-A78C CPU cores and two HTPs. All engines received the same first observation from task IDs 0–4 in each LIBERO suite, for 20 observations total. The board ran three warm-ups per engine. ORT and PyTorch used four inference threads, with one OpenBLAS thread for the host projections. Timing starts with both RGB arrays in memory and ends with 50 denormalized actions. Camera capture, transport and motor control are outside this measurement. [ONNX and QNN timings](../results/iq9075.json) · [Native PyTorch timings](../results/iq9075-native.json).
 
+The benchmark executes one prediction at a time. LeRobot async inference overlaps prediction with the execution of queued actions. At 25 Hz, ten queued actions cover 400 ms at most, and the refill deadline depends on how many actions remain when the request starts. A rollout measurement would also include capture, transport and queue underruns. [LeRobot asynchronous inference](https://huggingface.co/blog/async-robot-inference).
+
 | IQ-9075 engine | Median | p95 | Maximum | Cold initialization |
 | --- | ---: | ---: | ---: | ---: |
 | Native LeRobot (PyTorch CPU) | 28,749.1 ms | 29,915.4 ms | 29,964.8 ms | 29.6 s |
 | ORT CPU FP32 | 5,812.8 ms | 6,001.3 ms | 6,056.4 ms | 3.0 s |
 | QNN Adreno 663 GPU FP32 recheck | 27,891.6 ms | 27,919.3 ms | 27,921.3 ms | 16.1 s |
 | QNN Adreno 663 GPU FP16 | 21,540.7 ms | 21,577.8 ms | 21,593.1 ms | 14.5 s |
+| QNN Adreno 663 GPU FP16 with 1×1 vision Conv | 10,200.3 ms | 10,221.7 ms | 10,231.5 ms | 15.0 s |
 | QNN single HTP FP16 | 323.2 ms | 329.6 ms | 329.7 ms | 64.2 s |
 | QNN dual HTP FP16 | 249.7 ms | 254.4 ms | 255.1 ms | 78.6 s |
 
@@ -44,6 +47,25 @@ The FP16 bundle derives from that FP32 export and keeps the same checkpoint and 
 
 FP16 reduced median vision latency by **23.6%** and total latency by **22.8%**. Relative to the matched HTP runs, the FP16 GPU pass took **66.6×** as long as single HTP and **86.3×** as long as dual HTP. [FP16 timing samples](../results/iq9075-adreno-fp16.json).
 
+### Adreno vision operator profile
+
+QNN detailed profiling recorded each node in the FP16 vision graph. The profile used the two 512×512 views from `libero_10-00-00.npz`. The table is the mean of the two view executions after one warm-up. QNN graph time comes from the root execute event, and stage rows sum the corresponding node events.
+
+| QNN GPU operator group | Original FP16, ms/view | 1×1 Conv export, ms/view |
+| --- | ---: | ---: |
+| MLP expansion (fc1) | 2,029.8 | 235.9 |
+| MLP contraction (fc2) | 2,352.7 | 244.6 |
+| Attention Q, K, V and output projections | 2,030.6 | 192.8 |
+| Attention Softmax | 817.7 | 818.4 |
+| Attention score and value MatMul | 506.5 | 508.3 |
+| Vision connector MatMul | 82.5 | 80.5 |
+| Other operators and time outside node events | 79.6 | 149.1 |
+| **QNN graph execute** | **7,899.3** | **2,229.5** |
+
+The 72 linear layers account for **81.2%** of the original QNN graph time. The rewritten graph arranges the 1,024 image tokens in a 32×32 grid and applies the same weights and biases as pointwise convolutions. Each position retains its original inputs and channel outputs. The prefill and Action Expert graphs keep their original hashes. The encoder outputs on the profiled observation differ by 0.45% relative L2. Attention Softmax is the largest remaining operator group after the rewrite. [Original FP16 QNN trace](../results/adreno-vision-fp16-profile.csv) · [1×1 Conv QNN trace](../results/adreno-vision-conv-profile.csv).
+
+The full 10-step benchmark reused the 20 archived FP16 observation hashes. Median two-view vision latency fell from 15,777.5 to 4,438.3 ms (71.9%), and median end-to-end prediction fell from 21,540.7 to 10,200.3 ms (52.6%). The optimized GPU prediction took 31.6× as long as single HTP and 40.8× as long as dual HTP. [Matched timing samples](../results/iq9075-adreno-vision-conv.json) · [Vision export manifest](../results/export-adreno-vision-conv-manifest.json).
+
 ## Action agreement on fixed observations
 
 Relative L2 divides the pooled L2 norm of the error by the pooled L2 norm of the native CUDA output. Each comparison uses the same RGB images, state, task text and initial noise. Action values are denormalized.
@@ -54,6 +76,7 @@ Relative L2 divides the pooled L2 norm of the error by the pooled L2 norm of the
 | ORT CPU FP32 | 0.29% | 0.28% |
 | QNN Adreno 663 GPU FP32 recheck | 0.29% | 0.28% |
 | QNN Adreno 663 GPU FP16 | 0.47% | 5.21% |
+| QNN Adreno 663 GPU FP16 with 1×1 vision Conv | 0.48% | 6.61% |
 | QNN single HTP FP16 | 0.46% | 3.08% |
 | QNN dual HTP FP16 | 0.46% | 3.08% |
 

@@ -8,12 +8,15 @@ An ONNX exporter, dual-HTP runtime and paired LIBERO benchmark for `lerobot/smol
 
 The original 10-step checkpoint went from **28,749.1 ms on PyTorch CPU to 249.7 ms on dual HTP**, a **115.1× speedup**. Against ONNX Runtime CPU on the same exported graphs, dual HTP was **23.3× faster**. All rows use the same 20 LIBERO observations, measured from two RGB images in memory through 50 denormalized actions after three warm-up calls.
 
+This measures one chunk prediction at a time. SmolVLA's async rollout can predict the next chunk while the robot executes the current one, reducing time spent waiting between chunks. The table measures the prediction time the rollout would need to overlap. [LeRobot asynchronous inference](https://huggingface.co/blog/async-robot-inference).
+
 | Runtime on IQ-9075 | Denoising steps | Median | p95 | Speedup vs. PyTorch CPU |
 | --- | ---: | ---: | ---: | ---: |
 | Native LeRobot, PyTorch CPU | 10 | 28,749.1 ms | 29,915.4 ms | 1.0× |
 | ONNX Runtime CPU, FP32 | 10 | 5,812.8 ms | 6,001.3 ms | 4.9× |
 | QNN Adreno 663 GPU, FP32 recheck | 10 | 27,891.6 ms | 27,919.3 ms | 1.03× |
 | QNN Adreno 663 GPU, FP16 | 10 | 21,540.7 ms | 21,577.8 ms | 1.33× |
+| QNN Adreno 663 GPU, FP16 with 1×1 vision Conv | 10 | 10,200.3 ms | 10,221.7 ms | 2.82× |
 | QNN single HTP, FP16 | 10 | 323.2 ms | 329.6 ms | 89.0× |
 | QNN dual HTP, FP16 | 10 | 249.7 ms | 254.4 ms | 115.1× |
 | QNN dual HTP, FP16, undistilled | 2 | **173.1 ms** | **176.9 ms** | **166.1×** |
@@ -21,6 +24,8 @@ The original 10-step checkpoint went from **28,749.1 ms on PyTorch CPU to 249.7 
 The 10-step rows use the same checkpoint weights and denoising schedule. The last row keeps the weights and cuts the Euler schedule from ten updates to two. [Benchmark protocol and raw timings](docs/results.md).
 
 The Adreno FP32 recheck reproduced the original **27,900.8 ms** median with a **0.03%** difference on the same 20 inputs. FP16 reduced two-view vision latency from **20,649.7 to 15,777.5 ms (23.6%)** and total latency by **22.8%**. The FP16 GPU pass still took **66.6×** as long as single HTP and **86.3×** as long as dual HTP. The Adreno runs used the GPU device with graph CPU fallback disabled. [Adreno benchmark details](docs/results.md#adreno-gpu-comparison).
+
+QNN's operator profile attributed **81.2%** of FP16 vision time to 72 linear projections. Expressing those layers as 1×1 convolutions kept the weights and biases and selected faster Adreno kernels. On the same 20 observations, vision fell from **15,777.5 to 4,438.3 ms (71.9%)** and full 10-step prediction fell from **21,540.7 to 10,200.3 ms (52.6%)**. [Operator trace and paired timing](docs/results.md#adreno-vision-operator-profile).
 
 ## What changed
 

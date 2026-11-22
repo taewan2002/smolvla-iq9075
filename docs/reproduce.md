@@ -83,6 +83,26 @@ scp -r bundles/libero-adreno-fp16 user@iq9075:~/
 
 Use the same board command, with `--bundle ~/libero-adreno-fp16 --output runs/iq9075-adreno-fp16.json`. The runtime feeds FP16 tensors to the graph sessions and uses FP32 for the host K/V projections and action scaling.
 
+To select the pointwise convolution kernels on Adreno, convert the FP16 vision graph and copy the new bundle to the board.
+
+```bash
+python -m smolvla_iq9075.adreno_vision --bundle bundles/libero-adreno-fp16 \
+  --output bundles/libero-adreno-vision-conv
+scp -r bundles/libero-adreno-vision-conv user@iq9075:~/
+```
+
+Use the same board timing command, with `--bundle ~/libero-adreno-vision-conv --output runs/iq9075-adreno-vision-conv.json`. Run the per-operator profile separately from the latency benchmark. Use each bundle with the same fixture and a fresh output path.
+
+```bash
+for bundle in libero-adreno-fp16 libero-adreno-vision-conv; do
+  OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+    python -m smolvla_iq9075.profile_vision --bundle "$HOME/$bundle" \
+    --fixture ~/fixtures/libero_10-00-00.npz --output "runs/$bundle-vision-profile.csv"
+done
+```
+
+In the CSV, use `EXECUTE` rows for each view's graph time and the corresponding `NODE` rows for operator timings in microseconds. The first execution is the warm-up. [Operator breakdown](results.md#adreno-vision-operator-profile).
+
 ## Native PyTorch latency on IQ-9075
 
 Use a separate CPU-only Python environment for the LeRobot reference. On the board, install the matching ARM64 wheels from PyPI and use the same pinned LeRobot source checkout described above.

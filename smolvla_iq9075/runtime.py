@@ -25,6 +25,18 @@ def bias(valid, groups):
     return np.where(np.tile(valid, (groups, 1)), np.float32(0), np.float32(-10000))[None, None]
 
 
+def prepare_rgb(rgb, params):
+    image = rgb.astype(np.float32) / np.float32(255.0)
+    xi, xw = params["x_index"], params["x_weight"]
+    yi, yw = params["y_index"], params["y_weight"]
+    along_x = image[:, xi[:, 0]] * xw[None, :, 0, None] + image[:, xi[:, 1]] * xw[None, :, 1, None]
+    inner = along_x[yi[:, 0]] * yw[:, 0, None, None] + along_x[yi[:, 1]] * yw[:, 1, None, None]
+    height, width = params["output_size"]
+    result = np.full((1, 3, height, width), -1, dtype=np.float32)
+    result[0, :, height - inner.shape[0]:, width - inner.shape[1]:] = inner.transpose(2, 0, 1) * 2 - 1
+    return result
+
+
 def opened_device_nodes(*prefixes):
     paths = set()
     fd_dir = Path("/proc/self/fd")
@@ -73,7 +85,7 @@ class SessionFactory:
             if not self.devices:
                 raise RuntimeError(f"No registered QNN device for {backend}")
 
-    def create(self, path, device=None):
+    def create(self, path, device=None, *, qnn_profile=None):
         ort = self.ort
         opts = ort.SessionOptions()
         opts.intra_op_num_threads = self.threads
@@ -88,6 +100,8 @@ class SessionFactory:
                 "device_id": str(device), "htp_arch": "73", "enable_htp_fp16_precision": "1",
                 "htp_performance_mode": "burst", "htp_graph_finalization_optimization_mode": "3",
             })
+        if qnn_profile is not None:
+            options.update({"profiling_level": "detailed", "profiling_file_path": str(qnn_profile.resolve())})
         opts.add_provider_for_devices(self.devices, options)
         session = ort.InferenceSession(str(path), opts)
         session.disable_fallback()
@@ -148,16 +162,7 @@ class EdgePolicy:
             self.pool.shutdown()
 
     def prepare_rgb(self, rgb):
-        params = self.resize
-        image = rgb.astype(np.float32) / np.float32(255.0)
-        xi, xw = params["x_index"], params["x_weight"]
-        yi, yw = params["y_index"], params["y_weight"]
-        along_x = image[:, xi[:, 0]] * xw[None, :, 0, None] + image[:, xi[:, 1]] * xw[None, :, 1, None]
-        inner = along_x[yi[:, 0]] * yw[:, 0, None, None] + along_x[yi[:, 1]] * yw[:, 1, None, None]
-        height, width = params["output_size"]
-        result = np.full((1, 3, height, width), -1, dtype=np.float32)
-        result[0, :, height - inner.shape[0]:, width - inner.shape[1]:] = inner.transpose(2, 0, 1) * 2 - 1
-        return result
+        return prepare_rgb(rgb, self.resize)
 
     def __call__(self, rgb, state, task, noise):
         return self.predict(rgb, state, task, noise)[0]
