@@ -107,7 +107,8 @@ def execute_episode(env, raw, observe, camera, policy, instruction, noise_rng, e
                     next_boundary = slot + 1
             raw, _, done, _ = env.step(command)
             success = bool(env.check_success())
-            if success or done or applied == limit:
+            # LIBERO's step result omits the underlying RoboSuite horizon.
+            if success or done or env.env.done or applied == limit:
                 break
             if request:
                 future = submit(raw, applied)

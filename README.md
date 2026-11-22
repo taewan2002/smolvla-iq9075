@@ -12,7 +12,7 @@ The pinned export uses the original weights and two Euler steps. It predicts 50 
 python -m smolvla_iq9075.export --output bundles/libero
 ```
 
-The default paced example uses **25 Hz**. The two-step IQ-9075 pilot completed 8 simulated rollouts at this rate with zero empty queue ticks and zero skipped control slots. [Control-rate sweep and commands](docs/chunk-pacing.md#two-step-deployment-rates).
+The default paced example uses **25 Hz**. With an eight-action refill lead, the control-rate pilot completed eight simulated rollouts at this rate with zero empty queue ticks and zero skipped control slots. [Control-rate sweep and commands](docs/chunk-pacing.md#two-step-deployment-rates).
 
 ## IQ-9075 HTP inference
 
@@ -31,13 +31,25 @@ Using the same optimized export and ten denoising steps, dual HTP reduced median
 
 ## Timed asynchronous rollout
 
-The simulator runs at 25 Hz while the board predicts 50 actions per query with dual HTP and ten denoising steps. Each mode applies ten actions per accepted chunk. The background worker can prepare the next chunk while commands are being applied. The cosine option blends three aligned position and rotation commands at each boundary and takes the gripper command from the new chunk.
+The simulator runs at 25 Hz while IQ-9075 dual HTP predicts 50 actions per query. Each chunk supplies ten commands. In the two-step pilot, every mode used three-step cosine blending for aligned position and rotation commands. Gripper commands came from the new chunk.
 
-| Execution | Success | Mean / p95 chunk wait | Empty ticks |
+| Two-step execution | Success | Median chunk wait | Empty ticks |
 | --- | ---: | ---: | ---: |
-| Synchronous | 31/40 | 334.7 ms / 400.0 ms | 7,130 (44.72%) |
-| Asynchronous | 23/40 | 20.4 ms / 120.0 ms | 479 (4.72%) |
-| Asynchronous + 3-step cosine | 26/40 | 36.8 ms / 120.0 ms | 836 (8.22%) |
+| Synchronous | 7/8 | 320 ms | 1,288 |
+| Async, request with 3 actions left | 7/8 | 160 ms | 804 |
+| Async, request with 5 actions left | 5/8 | 120 ms | 637 |
+
+The three-action lead halved median chunk wait in this shared-board pilot. Sync and the three-action lead each solved one episode the other missed. Timing covers completed chunk handoffs after startup. [Matched episodes, board activity and reproduction](docs/chunk-pacing.md#two-step-refill-lead-at-25-hz).
+
+### Ten-step comparison
+
+The earlier pilot used ten denoising steps and an eight-action refill lead in both async modes.
+
+| Execution | Success | Median chunk wait | Empty ticks |
+| --- | ---: | ---: | ---: |
+| Synchronous | 31/40 | 320 ms | 7,130 (44.72%) |
+| Asynchronous | 23/40 | 0 ms | 479 (4.72%) |
+| Asynchronous + 3-step cosine | 26/40 | 0 ms | 836 (8.22%) |
 
 The paired trial covers 40 matching LIBERO initial conditions per mode. Chunk wait and empty ticks exclude startup. The control rate is configurable. [Timing definitions, command continuity and reproduction](docs/chunk-pacing.md).
 

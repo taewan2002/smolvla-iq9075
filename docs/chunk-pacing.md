@@ -1,6 +1,6 @@
 # Timed LIBERO rollouts on IQ-9075
 
-The workstation runs LIBERO and issues simulated commands on a 25 Hz monotonic clock. IQ-9075 predicts action chunks with the original 10-step SmolVLA and dual HTP. Each query predicts 50 actions. Each accepted chunk supplies ten commands, up to the episode's terminal condition. All modes share the same model, simulated controller, 25 Hz physics control frequency, published initial states, episode seeds and caps on policy actions. The original LIBERO evaluation uses its 20 Hz default. [LIBERO environment wrapper](https://github.com/Lifelong-Robot-Learning/LIBERO/blob/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/envs/env_wrapper.py).
+The workstation runs LIBERO and issues simulated commands on a 25 Hz monotonic clock for the paired pilots. IQ-9075 predicts action chunks with the original SmolVLA weights on dual HTP. Each query predicts 50 actions. Each accepted chunk supplies ten commands, up to the episode's terminal condition. Within each pilot, all modes share the model, simulated controller, control frequency, published initial states, episode seeds and caps on policy actions. The original LIBERO evaluation uses its 20 Hz default. [LIBERO environment wrapper](https://github.com/Lifelong-Robot-Learning/LIBERO/blob/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/envs/env_wrapper.py).
 
 ## Chunk scheduling and smoothing
 
@@ -14,7 +14,7 @@ LeRobot's asynchronous inference overlaps execution with prediction. ALOHA Light
 
 - A command tick is one slot on the 25 Hz host clock. Eight queued actions take 320 ms to apply. An entire ten-action execution window spans 400 ms. The model's prediction time, the capture and RPC path, and the number of remaining commands determine the refill deadline.
 - An **empty tick** is a visited control slot after startup where the policy queue is empty. The simulator advances with the hold command. A **scheduler miss** is a slot skipped because the host reached a later deadline. Skipped slots never cause a burst of catch-up commands.
-- **Chunk wait** is the number of clock intervals from the expected next chunk boundary to its first applied action, multiplied by 40 ms. Immediate handoffs count as zero. **Startup** covers the first prediction separately. Inference time includes client observation preparation, RPC and board computation.
+- **Chunk wait** is the number of clock intervals from the expected next chunk boundary to its first applied action, multiplied by 40 ms. The median includes all completed boundaries across the episodes, with zero for an immediate handoff. **Startup** covers the first prediction separately. Inference time includes client observation preparation, RPC and board computation.
 - **Boundary jump** is the L2 difference between the last position or rotation command of one chunk and the first of the next. It measures command continuity in LIBERO's relative action units.
 
 The action rate is configurable with `--control-hz`. At 50 Hz the ten-action window would span 200 ms, shorter than the measured 10-step dual-HTP prediction alone. A higher-frequency low-level controller can interpolate between policy setpoints while preserving the policy's action timing. These measurements concern simulator command ticks.
@@ -23,17 +23,17 @@ The action rate is configurable with `--control-hz`. At 50 Hz the ten-action win
 
 Each mode ran 40 episodes with the first published initial state for each of the ten tasks in all four LIBERO suites. The matched hashes include the first RGB frames and robot state for each episode after warm-up. The command clock and camera sampler ran on the simulator host and the board ran the 10-step QNN dual-HTP graph.
 
-| Execution | Success | Mean / p95 chunk wait | Empty ticks |
+| Execution | Success | Median chunk wait | Empty ticks |
 | --- | ---: | ---: | ---: |
-| Synchronous | 31/40 | 334.7 ms / 400.0 ms | 7,130 (44.72%) |
-| Asynchronous | 23/40 | 20.4 ms / 120.0 ms | 479 (4.72%) |
-| Asynchronous + 3-step cosine | 26/40 | 36.8 ms / 120.0 ms | 836 (8.22%) |
+| Synchronous | 31/40 | 320 ms | 7,130 (44.72%) |
+| Asynchronous | 23/40 | 0 ms | 479 (4.72%) |
+| Asynchronous + 3-step cosine | 26/40 | 0 ms | 836 (8.22%) |
 
-| Execution | Median wait | Late boundaries | Scheduler misses | Median episode excluding startup | Median / p95 query |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Synchronous | 320.0 ms | 849/849 | 0 | 12.05 s | 339.0 ms / 403.4 ms |
-| Asynchronous | 0.0 ms | 219/940 | 0 | 10.41 s | 337.2 ms / 450.0 ms |
-| Asynchronous + 3-step cosine | 0.0 ms | 286/906 | 0 | 8.15 s | 342.9 ms / 471.3 ms |
+| Execution | Late boundaries | Scheduler misses | Median episode excluding startup | Median / p95 query |
+| --- | ---: | ---: | ---: | ---: |
+| Synchronous | 849/849 | 0 | 12.05 s | 339.0 ms / 403.4 ms |
+| Asynchronous | 219/940 | 0 | 10.41 s | 337.2 ms / 450.0 ms |
+| Asynchronous + 3-step cosine | 286/906 | 0 | 8.15 s | 342.9 ms / 471.3 ms |
 
 | Suite | Synchronous | Asynchronous | Async + cosine |
 | --- | ---: | ---: | ---: |
@@ -100,3 +100,26 @@ python -m smolvla_iq9075.libero --engine remote --url http://127.0.0.1:18075 \
 ```
 
 For the sweep, use task 0 with `--tasks 1` at 20, 25, 30, 35, 40 and 50 Hz. Add a second run with `--task-start 1 --tasks 1` at 25 and 30 Hz. Use a fresh output file for each rate and task group.
+
+## Two-step refill lead at 25 Hz
+
+The paired pilot used tasks 0 and 1 in each of the four LIBERO suites, with published initial-state index 0. IQ-9075 ran the original two-step FP16 model on dual HTP. Every mode predicted 50 actions, executed ten per chunk and used three-step cosine blending. The simulator ran at 25 Hz, with its episode horizon counting both policy and hold commands. The first RGB and robot-state hashes matched across all modes.
+
+| Refill schedule | Success | Median chunk wait | Completed handoffs | Empty ticks |
+| --- | ---: | ---: | ---: | ---: |
+| Sync | 7/8 | 320 ms | 156 | 1,288 |
+| Async with 3 actions left | 7/8 | 160 ms | 159 | 804 |
+| Async with 5 actions left | 5/8 | 120 ms | 176 | 637 |
+
+All modes recorded zero scheduler misses. The three-action lead succeeded on six of the same episodes as sync, recovered LIBERO Long task 1 and missed LIBERO Object task 0. A separate process briefly used one HTP, and camera and display services started during the sweep. Their effect on timing was not isolated. [Episode logs](../results/two-step-cosine-refill/episodes.jsonl) · [Paired summary](../results/two-step-cosine-refill/summary.json).
+
+The recorded sweep interleaved the three modes for each initial state. To run each profile from the CLI with the default dual-HTP two-step bundle and the same simulator assets, run the following on the simulation workstation.
+
+```bash
+export PYTHONHASHSEED=0
+for lead in 0 3 5; do
+  python -m smolvla_iq9075.libero --engine remote --url http://127.0.0.1:18075 \
+    --libero-root upstream/LIBERO/libero/libero --control-hz 25 --execute 10 \
+    --refill-actions "$lead" --overlap 3 --tasks 2 --output "runs/dual-2step-lead-$lead.jsonl"
+done
+```
