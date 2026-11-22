@@ -1,0 +1,304 @@
+{
+  "bundle_manifest_sha256": "1478fd0b07a49bc3c7f489bef18b7aecf6445978db301c9884e926bdc3ff96af",
+  "machine": "aarch64",
+  "kernel": "6.8.0-1084-qcom",
+  "warmup": 3,
+  "repeats": 1,
+  "threads": 4,
+  "executed_slice": 10,
+  "fixtures": {
+    "libero_10-00-00.npz": "53e33059735c5fa3e54614b33ecba5251a34d3d3e049d15886eaf71aeea0e4d9",
+    "libero_goal-00-00.npz": "2d85a3e021cf35330d854452520f241cdfedcfd3b90cb19816ec8108784b27ae",
+    "libero_object-00-00.npz": "20d0c4f2f102298c6675c9f31bcf4fc7a4c474593eb6aabbe100790d90564389",
+    "libero_spatial-00-00.npz": "10cc9c1dfa88c6f073dd6b13c6c85980146527ea1799c0c77494f56908430f43",
+    "libero_10-01-00.npz": "59ef9c9e34eb29c7022e292703d1cf2a440f743dc2e243e6af86ea8db6d1534a",
+    "libero_goal-01-00.npz": "80543d52ba1ffc99e3e6d83cec40bb36d7d2a668e04b7fa702b08db2905023b2",
+    "libero_object-01-00.npz": "2701a7d98c6d20860b09a2de9b6d503c6bc11b6414b1fd8cb824a073596a8489",
+    "libero_spatial-01-00.npz": "f0e59080b014783f484972fc146808eb95857bd0db2a0aefa6bf315c4daec9c8",
+    "libero_10-02-00.npz": "390c6f4ccb48c773f9ee9423a0f4d8250259e552d6d79c0836ab40e78e66604a",
+    "libero_goal-02-00.npz": "aa61bddb7296ef5d4807dfc54aa5ea4166e32b7ab9cdd855d9521a3a27eaef9d",
+    "libero_object-02-00.npz": "cae1153920d56c3f052837734fb32f918675a21eea6468e4b4ae19a0b0230832",
+    "libero_spatial-02-00.npz": "149b377025d1a6a18896db0e473f5a22570ceeb2cdfa43c596d8a198b2078c4a",
+    "libero_10-03-00.npz": "1735fc8bc5b0ff2dc5add9e8ab504e093b15d6ec8242ac3780b4360a407becd2",
+    "libero_goal-03-00.npz": "3f927a9e1c6e9527d0dedd138fe8832f006f6d2df64704774fb954ccf44bebf9",
+    "libero_object-03-00.npz": "16ede73c96db5086d2117d077c482734c90651a238f2f9b91f7a8471d30dd5a8",
+    "libero_spatial-03-00.npz": "411229aa0d6b118aad4277dd485f67cf5d025c7f53952666ee7a35a7dcaf1a40",
+    "libero_10-04-00.npz": "2eb47fd89a2aab69a8857ed6eab5e680d59d7d3dd232f638c460c26a4d71e035",
+    "libero_goal-04-00.npz": "ea2463c52ac409c3c84eb106949de84717d437b20edf17c611b828fa2fb811fa",
+    "libero_object-04-00.npz": "3beca3419782f4d5debf1dbec0627b19e978141a999a4014e0dd631b226abe25",
+    "libero_spatial-04-00.npz": "c83b9e76d20a51f2374980487c119b1a116cba370a207433c7addaf21a734826"
+  },
+  "runs": {
+    "gpu": {
+      "startup_ms": 16670.8458,
+      "htp_nodes": [],
+      "onnxruntime": "1.30.0",
+      "qnn_provider": "2.6.0",
+      "gpu_nodes": [
+        "/dev/kgsl-3d0"
+      ],
+      "aggregate_ms": {
+        "preprocess_ms": {
+          "median": 27.8671,
+          "p95": 30.6652,
+          "max": 30.9836
+        },
+        "vision_ms": {
+          "median": 20662.9637,
+          "p95": 20705.6401,
+          "max": 20713.2978
+        },
+        "prefill_ms": {
+          "median": 2519.1714,
+          "p95": 2528.7706,
+          "max": 2531.0454
+        },
+        "cache_ms": {
+          "median": 26.3238,
+          "p95": 32.8395,
+          "max": 35.4212
+        },
+        "action_ms": {
+          "median": 4667.3627,
+          "p95": 4686.9624,
+          "max": 4690.3855
+        },
+        "total_ms": {
+          "median": 27900.8437,
+          "p95": 27956.8352,
+          "max": 27960.4087
+        }
+      },
+      "raw_ms": [
+        {
+          "fixture": "libero_10-00-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 25.106872,
+          "vision_ms": 20695.143668,
+          "prefill_ms": 2523.172051,
+          "cache_ms": 26.253759,
+          "action_ms": 4673.656489,
+          "total_ms": 27943.378882
+        },
+        {
+          "fixture": "libero_goal-00-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 28.812087,
+          "vision_ms": 20666.156853,
+          "prefill_ms": 2521.075153,
+          "cache_ms": 31.437722,
+          "action_ms": 4654.2103,
+          "total_ms": 27901.719823
+        },
+        {
+          "fixture": "libero_object-00-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 22.199627,
+          "vision_ms": 20660.104562,
+          "prefill_ms": 2519.402631,
+          "cache_ms": 25.471611,
+          "action_ms": 4650.114233,
+          "total_ms": 27877.318756
+        },
+        {
+          "fixture": "libero_spatial-00-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 28.844888,
+          "vision_ms": 20705.237027,
+          "prefill_ms": 2509.613882,
+          "cache_ms": 32.703647,
+          "action_ms": 4672.53353,
+          "total_ms": 27949.069068
+        },
+        {
+          "fixture": "libero_10-01-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 19.727211,
+          "vision_ms": 20681.153595,
+          "prefill_ms": 2515.857776,
+          "cache_ms": 25.459664,
+          "action_ms": 4666.12907,
+          "total_ms": 27908.37487
+        },
+        {
+          "fixture": "libero_goal-01-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 30.983621,
+          "vision_ms": 20665.822913,
+          "prefill_ms": 2517.080451,
+          "cache_ms": 28.214366,
+          "action_ms": 4683.380746,
+          "total_ms": 27925.510483
+        },
+        {
+          "fixture": "libero_object-01-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 29.333223,
+          "vision_ms": 20643.824002,
+          "prefill_ms": 2513.370391,
+          "cache_ms": 26.39386,
+          "action_ms": 4673.120987,
+          "total_ms": 27886.09814
+        },
+        {
+          "fixture": "libero_spatial-01-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 19.145475,
+          "vision_ms": 20697.24859,
+          "prefill_ms": 2528.650894,
+          "cache_ms": 28.552469,
+          "action_ms": 4686.782249,
+          "total_ms": 27960.408687
+        },
+        {
+          "fixture": "libero_10-02-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 30.64841,
+          "vision_ms": 20686.516246,
+          "prefill_ms": 2524.747568,
+          "cache_ms": 24.31977,
+          "action_ms": 4690.385464,
+          "total_ms": 27956.647147
+        },
+        {
+          "fixture": "libero_goal-02-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 24.004719,
+          "vision_ms": 20713.297811,
+          "prefill_ms": 2520.221204,
+          "cache_ms": 28.530466,
+          "action_ms": 4665.868979,
+          "total_ms": 27951.951773
+        },
+        {
+          "fixture": "libero_object-02-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 28.203175,
+          "vision_ms": 20651.314774,
+          "prefill_ms": 2531.045374,
+          "cache_ms": 20.955619,
+          "action_ms": 4667.426888,
+          "total_ms": 27898.973695
+        },
+        {
+          "fixture": "libero_spatial-02-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 27.550739,
+          "vision_ms": 20680.55629,
+          "prefill_ms": 2527.806752,
+          "cache_ms": 35.421238,
+          "action_ms": 4655.940437,
+          "total_ms": 27927.303423
+        },
+        {
+          "fixture": "libero_10-03-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 28.830337,
+          "vision_ms": 20633.725056,
+          "prefill_ms": 2518.456591,
+          "cache_ms": 21.116209,
+          "action_ms": 4667.298519,
+          "total_ms": 27869.455045
+        },
+        {
+          "fixture": "libero_goal-03-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 28.183524,
+          "vision_ms": 20632.582221,
+          "prefill_ms": 2526.482313,
+          "cache_ms": 29.593068,
+          "action_ms": 4669.025594,
+          "total_ms": 27885.894533
+        },
+        {
+          "fixture": "libero_object-03-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 29.311246,
+          "vision_ms": 20652.092687,
+          "prefill_ms": 2513.271454,
+          "cache_ms": 25.710617,
+          "action_ms": 4679.551727,
+          "total_ms": 27899.967627
+        },
+        {
+          "fixture": "libero_spatial-03-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 25.188012,
+          "vision_ms": 20695.166039,
+          "prefill_ms": 2518.940198,
+          "cache_ms": 31.900755,
+          "action_ms": 4664.204757,
+          "total_ms": 27935.453461
+        },
+        {
+          "fixture": "libero_10-04-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 30.410125,
+          "vision_ms": 20646.942819,
+          "prefill_ms": 2520.33565,
+          "cache_ms": 22.472703,
+          "action_ms": 4649.675508,
+          "total_ms": 27869.8642
+        },
+        {
+          "fixture": "libero_goal-04-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 20.930875,
+          "vision_ms": 20654.409186,
+          "prefill_ms": 2516.172805,
+          "cache_ms": 31.771555,
+          "action_ms": 4651.84505,
+          "total_ms": 27875.160201
+        },
+        {
+          "fixture": "libero_object-04-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 23.395944,
+          "vision_ms": 20642.980127,
+          "prefill_ms": 2513.657112,
+          "cache_ms": 23.361054,
+          "action_ms": 4657.849122,
+          "total_ms": 27861.270494
+        },
+        {
+          "fixture": "libero_spatial-04-00.npz",
+          "repeat": 0,
+          "preprocess_ms": 26.071224,
+          "vision_ms": 20650.797813,
+          "prefill_ms": 2510.209499,
+          "cache_ms": 24.06346,
+          "action_ms": 4684.644852,
+          "total_ms": 27895.867578
+        }
+      ],
+      "vs_native": {
+        "max_absolute": 0.015996575355529785,
+        "mean_absolute": 0.0008104270534739563,
+        "relative_l2": 0.002816388726254367,
+        "mean_absolute_by_action_dim": [
+          0.0015802966617047788,
+          0.0011962157152593136,
+          0.0013616955801844597,
+          0.0001290653728065081,
+          0.00024340587854385375,
+          0.0002595042414031923,
+          0.0009028059244155884
+        ]
+      },
+      "executed_slice_vs_native": {
+        "max_absolute": 0.00696071982383728,
+        "mean_absolute": 0.0007624804131877942,
+        "relative_l2": 0.002853699714921346,
+        "mean_absolute_by_action_dim": [
+          0.00158887991681695,
+          0.0011492501571774482,
+          0.0011776253208518029,
+          0.00011456835767603479,
+          0.0002604455000255257,
+          0.00023051664582453667,
+          0.0008160769939422607
+        ]
+      }
+    }
+  }
+}

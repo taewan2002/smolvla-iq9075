@@ -8,7 +8,7 @@ from time import perf_counter
 import numpy as np
 
 from .native import NativePolicy, sha256, snapshots
-from .runtime import EdgePolicy
+from .runtime import EDGE_BACKENDS, EdgePolicy
 
 
 def statistics(values):
@@ -50,7 +50,7 @@ def main():
     parser.add_argument("--bundle", required=True, type=Path)
     parser.add_argument("--fixtures", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--engines", nargs="+", choices=["native", "cpu", "htp", "dual"], default=["cpu", "htp", "dual"])
+    parser.add_argument("--engines", nargs="+", choices=("native", *EDGE_BACKENDS), default=["cpu", "htp", "dual"])
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--vlm", type=Path)
     parser.add_argument("--repeats", type=int, default=1)
@@ -111,6 +111,8 @@ def main():
             predict = policy.predict
             details = {"htp_nodes": policy.devices, "onnxruntime": policy.ort_version,
                        "qnn_provider": policy.qnn_version}
+            if engine == "gpu":
+                details["gpu_nodes"] = policy.gpu_devices
         startup_ms = (perf_counter() - begin) * 1000
         try:
             outputs, timings, aggregate = measure(predict, files, args.repeats, args.warmup)

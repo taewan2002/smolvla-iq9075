@@ -12,11 +12,14 @@ The original 10-step checkpoint went from **28,749.1 ms on PyTorch CPU to 249.7 
 | --- | ---: | ---: | ---: | ---: |
 | Native LeRobot, PyTorch CPU | 10 | 28,749.1 ms | 29,915.4 ms | 1.0× |
 | ONNX Runtime CPU, FP32 | 10 | 5,812.8 ms | 6,001.3 ms | 4.9× |
+| QNN Adreno 663 GPU, FP32 | 10 | 27,900.8 ms | 27,956.8 ms | 1.03× |
 | QNN single HTP, FP16 | 10 | 323.2 ms | 329.6 ms | 89.0× |
 | QNN dual HTP, FP16 | 10 | 249.7 ms | 254.4 ms | 115.1× |
 | QNN dual HTP, FP16, undistilled | 2 | **173.1 ms** | **176.9 ms** | **166.1×** |
 
 The 10-step rows use the same checkpoint weights and denoising schedule. The last row keeps the weights and cuts the Euler schedule from ten updates to two. [Benchmark protocol and raw timings](docs/results.md).
+
+The Adreno FP32 run opened the GPU device and ran the ONNX graphs with CPU fallback disabled. It took **4.8× as long as ORT CPU**, spending **20.66 s** of the **27.90 s** median on the two vision passes. The Adreno-compatible export changes the prefill K/V layout and retains the original weights and Action Expert graph. [Adreno benchmark details](docs/results.md#adreno-gpu-comparison).
 
 ## What changed
 

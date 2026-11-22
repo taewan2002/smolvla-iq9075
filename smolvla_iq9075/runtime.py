@@ -1,4 +1,4 @@
-"""Batch-one ONNX policy runtime with CPU, single-HTP and dual-HTP schedules."""
+"""Batch-one ONNX policy runtime with CPU, Adreno GPU and HTP schedules."""
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 import json
@@ -7,6 +7,8 @@ from pathlib import Path
 from time import perf_counter_ns
 
 import numpy as np
+
+EDGE_BACKENDS = ("cpu", "gpu", "htp", "dual")
 
 
 def milliseconds(start):
@@ -23,7 +25,7 @@ def bias(valid, groups):
     return np.where(np.tile(valid, (groups, 1)), np.float32(0), np.float32(-10000))[None, None]
 
 
-def opened_htp_nodes():
+def opened_device_nodes(*prefixes):
     paths = set()
     fd_dir = Path("/proc/self/fd")
     if fd_dir.is_dir():
@@ -32,7 +34,7 @@ def opened_htp_nodes():
                 path = os.readlink(entry)
             except OSError:
                 continue
-            if path.startswith("/dev/fastrpc-cdsp"):
+            if path.startswith(prefixes):
                 paths.add(path)
     return sorted(paths)
 
@@ -45,25 +47,31 @@ def qnn_setup():
     import onnxruntime_qnn as qnn
 
     ort.register_execution_provider_library("QNNExecutionProvider", qnn.get_library_path())
-    devices = [
-        device for device in ort.get_ep_devices()
-        if device.ep_name == "QNNExecutionProvider"
-        and device.device.type == ort.OrtHardwareDeviceType.NPU
-    ][:1]
-    if not devices:
-        raise RuntimeError("No QNN HTP device registered")
-    return version("onnxruntime-qnn"), Path(qnn.__file__).parent / "libQnnHtp.so", devices
+    devices = [device for device in ort.get_ep_devices() if device.ep_name == "QNNExecutionProvider"]
+    return version("onnxruntime-qnn"), Path(qnn.__file__).parent, devices
 
 
 class SessionFactory:
-    def __init__(self, threads, use_qnn):
+    def __init__(self, threads, backend):
         import onnxruntime as ort
 
         self.ort = ort
         self.threads = threads
+        self.backend = backend
         self.qnn_version = None
-        if use_qnn:
-            self.qnn_version, self.backend, self.devices = qnn_setup()
+        if backend != "cpu":
+            self.qnn_version, directory, devices = qnn_setup()
+            npu_devices = [device for device in devices if device.device.type == ort.OrtHardwareDeviceType.NPU]
+            self.devices = npu_devices[:1]
+            self.backend_path = directory / "libQnnHtp.so"
+            if backend == "gpu":
+                gpu_devices = [device for device in devices if device.device.type == ort.OrtHardwareDeviceType.GPU]
+                # The Linux QNN plugin may advertise only an NPU entry. Its explicit backend
+                # option still selects the GPU library when creating the execution provider.
+                self.devices = gpu_devices[:1] or self.devices
+                self.backend_path = directory / "libQnnGpu.so"
+            if not self.devices:
+                raise RuntimeError(f"No registered QNN device for {backend}")
 
     def create(self, path, device=None):
         ort = self.ort
@@ -74,15 +82,17 @@ class SessionFactory:
             return ort.InferenceSession(str(path), opts, providers=["CPUExecutionProvider"])
 
         opts.add_session_config_entry("session.disable_cpu_ep_fallback", "1")
-        opts.add_provider_for_devices(self.devices, {
-            "backend_path": str(self.backend), "device_id": str(device), "htp_arch": "73",
-            "enable_htp_fp16_precision": "1", "htp_performance_mode": "burst",
-            "offload_graph_io_quantization": "0", "htp_graph_finalization_optimization_mode": "3",
-        })
+        options = {"backend_path": str(self.backend_path), "offload_graph_io_quantization": "0"}
+        if self.backend != "gpu":
+            options.update({
+                "device_id": str(device), "htp_arch": "73", "enable_htp_fp16_precision": "1",
+                "htp_performance_mode": "burst", "htp_graph_finalization_optimization_mode": "3",
+            })
+        opts.add_provider_for_devices(self.devices, options)
         session = ort.InferenceSession(str(path), opts)
         session.disable_fallback()
         if session.get_providers()[0] != "QNNExecutionProvider":
-            raise RuntimeError(f"Could not place {path.name} on HTP {device}")
+            raise RuntimeError(f"Could not place {path.name} on {self.backend_path.name} device {device}")
         return session
 
 
@@ -94,7 +104,7 @@ class EdgePolicy:
         self.manifest = meta = json.loads((bundle / "bundle.json").read_text())
         if meta["format"] != 1:
             raise ValueError(f"Unsupported bundle format {meta['format']}")
-        if backend not in ("cpu", "htp", "dual"):
+        if backend not in EDGE_BACKENDS:
             raise ValueError(f"Unknown backend: {backend}")
         self.backend = backend
         self.action_shape = tuple(meta["action_shape"])
@@ -111,7 +121,7 @@ class EdgePolicy:
             with np.load(bundle / f"{name}.npz") as archive:
                 setattr(self, field, {key: archive[key] for key in archive})
 
-        maker = SessionFactory(threads, backend != "cpu")
+        maker = SessionFactory(threads, backend)
         primary = None if backend == "cpu" else 0
         self.ort_version = maker.ort.__version__
         self.qnn_version = maker.qnn_version
@@ -124,7 +134,11 @@ class EdgePolicy:
             self.prefill.append(maker.create(bundle / f"{part}.onnx", device))
         self.action = maker.create(bundle / "action.onnx", primary)
         self.action_inputs = {item.name for item in self.action.get_inputs()}
-        self.devices = opened_htp_nodes()
+        self.devices = opened_device_nodes("/dev/fastrpc-cdsp")
+        if backend == "gpu":
+            self.gpu_devices = opened_device_nodes("/dev/kgsl-", "/dev/dri/renderD")
+            if not self.gpu_devices:
+                raise RuntimeError("QNN GPU sessions did not open an Adreno device node")
         self.pool = ThreadPoolExecutor(max_workers=2) if backend == "dual" else None
 
     def close(self):
@@ -199,6 +213,9 @@ class EdgePolicy:
             keys.append(key)
             values.append(value)
         keys, values = np.concatenate(keys), np.concatenate(values)
+        if keys.ndim == 4:
+            # Restore the singleton batch dimension expected by the Action Expert.
+            keys, values = keys[:, None], values[:, None]
         times["prefill_ms"] = milliseconds(stage)
 
         stage = perf_counter_ns()

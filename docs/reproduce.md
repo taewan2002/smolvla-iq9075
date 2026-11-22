@@ -53,6 +53,25 @@ Run with an idle board. `cpu` uses the serialized FP32 graphs with ORT CPU. `htp
 
 The timers start with RGB arrays already available and end after action scaling. Warm-ups and graph compilation are excluded from the latency distribution. The report includes session initialization time, per-stage samples, action error against the native output for the full chunk and first 10 actions, and the HTP device files opened. The timers exclude physical cameras, transport, robot drivers and motor control.
 
+### Adreno GPU
+
+On the workstation, export the same checkpoint with rank-four prefill K/V outputs and copy the bundle to the board.
+
+```bash
+python -m smolvla_iq9075.export --adreno-compatible --output bundles/libero-adreno
+scp -r bundles/libero-adreno user@iq9075:~/
+```
+
+On IQ-9075, use the QNN package's `libQnnGpu.so` and give the benchmark process access to the Adreno device node. Use the same fixtures and thread settings as the CPU and HTP runs.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  python -m smolvla_iq9075.bench --bundle ~/libero-adreno --fixtures ~/fixtures \
+  --output runs/iq9075-adreno.json --engines gpu --repeats 1 --warmup 3 --limit 20 --execute 10
+```
+
+The runtime restores the singleton batch dimension before passing the K/V arrays to the Action Expert. It selects the QNN GPU library explicitly, disables CPU fallback for all graph sessions, and records the opened GPU device nodes in the report. [QNN GPU backend documentation](https://github.com/onnxruntime/onnxruntime-qnn/blob/main/docs/execution_providers/QNN-ExecutionProvider.md#running-a-model-with-qnn-eps-gpu-backend).
+
 ## Native PyTorch latency on IQ-9075
 
 Use a separate CPU-only Python environment for the LeRobot reference. On the board, install the matching ARM64 wheels from PyPI and use the same pinned LeRobot source checkout described above.

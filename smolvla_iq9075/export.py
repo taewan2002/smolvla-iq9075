@@ -92,13 +92,14 @@ class Vision(nn.Module):
 
 
 class Prefill(nn.Module):
-    def __init__(self, layers, width, q_heads, kv_heads, last):
+    def __init__(self, layers, width, q_heads, kv_heads, last, adreno_compatible=False):
         super().__init__()
         self.layers = nn.ModuleList(layers)
         self.width = width
         self.q_heads = q_heads
         self.kv_heads = kv_heads
         self.last = last
+        self.adreno_compatible = adreno_compatible
 
     def forward(self, hidden, mask, sine, cosine):
         keys, values = [], []
@@ -113,6 +114,10 @@ class Prefill(nn.Module):
                 break
             query = rope(heads(attn.q_proj(norm), self.q_heads, self.width), sine, cosine)
             hidden = residual(layer, hidden, attend(query, key, value, mask))
+        if self.adreno_compatible:
+            # The graph uses batch one. Concatenating along batch produces the same
+            # cache values without the rank-five Concat from torch.stack.
+            return hidden, torch.cat(keys), torch.cat(values)
         return hidden, torch.stack(keys), torch.stack(values)
 
 
@@ -186,7 +191,7 @@ def input_contract(config, wrapper):
 
 
 @torch.inference_mode()
-def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None):
+def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None, adreno_compatible=False):
     from lerobot.policies.smolvla.modeling_smolvla import create_sinusoidal_pos_embedding
 
     torch.set_num_threads(4)
@@ -250,7 +255,7 @@ def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None):
     parts = []
     for start in range(0, len(layers), part_size):
         end = min(start + part_size, len(layers))
-        part = Prefill(layers[start:end], width, q_heads, kv_heads, end == len(layers)).eval()
+        part = Prefill(layers[start:end], width, q_heads, kv_heads, end == len(layers), adreno_compatible).eval()
         stabilize(part)
         name = f"prefill_{start:02d}"
         emit(output, name, part, {"hidden": hidden, "mask": prefix_mask, "sine": prefix_angles,
@@ -300,6 +305,8 @@ def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None):
         "checkpoint_sha256": sha256(checkpoint / "model.safetensors"),
         "versions": {key: version(key) for key in ("torch", "transformers", "onnx")},
     }
+    if adreno_compatible:
+        manifest["prefill_cache_rank"] = 4
     manifest["files"] = {p.name: sha256(p) for p in sorted(output.iterdir())}
     (output / "bundle.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
@@ -311,6 +318,7 @@ def main():
     parser.add_argument("--vlm", type=Path)
     parser.add_argument("--prefill-layers", type=int, default=6)
     parser.add_argument("--flow-steps", type=int, help="Override Euler steps while retaining the checkpoint weights")
+    parser.add_argument("--adreno-compatible", action="store_true", help="Export rank-four prefill K/V outputs for QNN GPU")
     args = parser.parse_args()
     if args.flow_steps is not None and args.flow_steps < 1:
         parser.error("--flow-steps must be positive")
@@ -322,7 +330,7 @@ def main():
     else:
         checkpoint, vlm = snapshots()
         provenance = {"id": MODEL, "revision": REVISION, "vlm": VLM, "vlm_revision": VLM_REVISION}
-    export(checkpoint, vlm, args.output, args.prefill_layers, provenance, args.flow_steps)
+    export(checkpoint, vlm, args.output, args.prefill_layers, provenance, args.flow_steps, args.adreno_compatible)
 
 
 if __name__ == "__main__":
