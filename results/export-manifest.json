@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "model": {
+    "source": "local"
+  },
+  "images": [
+    [
+      3,
+      256,
+      256
+    ],
+    [
+      3,
+      256,
+      256
+    ]
+  ],
+  "image_tokens": 64,
+  "text_length": 48,
+  "prefix_length": 177,
+  "head_width": 64,
+  "heads_per_group": 3,
+  "state_dim": 32,
+  "action_dim": 7,
+  "action_shape": [
+    1,
+    50,
+    32
+  ],
+  "execute": 1,
+  "denoising_steps": 10,
+  "prefill": [
+    "prefill_00",
+    "prefill_06",
+    "prefill_12",
+    "prefill_18",
+    "prefill_24",
+    "prefill_30"
+  ],
+  "cross_layers": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15,
+    17,
+    19,
+    21,
+    23,
+    25,
+    27,
+    29,
+    31
+  ],
+  "token_scale": 30.983866769659336,
+  "checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "versions": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.51.3",
+    "onnx": "1.19.1"
+  },
+  "files": {
+    "action.onnx": "9173160c365b09947ac29ac7343bbe96f17ec0b84a0c4653dd709105961fc364",
+    "cross_projection.npz": "bdbd6cce37750ae74d9025a4d74abce502bd69b4815af5ded4be7dc3674c395f",
+    "prefill_00.onnx": "82e49773b5a31320e8d855a998a87c82f08adb4aa71a0bf80c833acdf291e16e",
+    "prefill_06.onnx": "1f12cd0468df98a326c11d02d315f058f91c19b014381e0987322ce88af4fd1c",
+    "prefill_12.onnx": "082713fcc1ef031732f64677936dc7572af3936e46f09345dc204549d4746048",
+    "prefill_18.onnx": "8e6bf80d94072ad3e11441efc9eea82e5e6eea72b2420c68bdbc0c2c627a969a",
+    "prefill_24.onnx": "b0c46b0de0615cb8f65518559a777acc2ea5031212913a48eb4cd2b650d17a8c",
+    "prefill_30.onnx": "fdd605a457cc0442e98527f4e9e3bd2972fec7d4a825a3c1a8374afe9bf067d7",
+    "resize.npz": "145065618ab65487c14182cbb82fd3cabb9ac0200d194efed224accf579199a6",
+    "state_bias.npy": "af9c9727d79ff519936ba4011ed4d52dc2f42f41d11a9945ca60fe5b8326ba67",
+    "state_weight.npy": "0fbd70036cc3f9d2ce91afdbf75b84e897dcb2b975446748eea5bffd2896bef3",
+    "stats.npz": "fe0c5a7b52ae579200661c01943e8c37d2159fd4ccde16f5780f5113c4c9886a",
+    "time.npy": "00e1cd491f6beb1729a35bbe7af171125ce0998a385f4dc3e8ef80dc942eb9ec",
+    "token_embedding.npy": "226adbf93820671559d70330a69e69f02641a41b8284dd26b51576545ab3eb10",
+    "tokenizer.json": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a",
+    "vision.onnx": "51153cdf42fa75ff3cdbf70ad380a06d5c16b4be9669924c16df9a68a0098821"
+  }
+}

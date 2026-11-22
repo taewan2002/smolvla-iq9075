@@ -1,0 +1,9 @@
+This product includes adaptations of model and observation preprocessing
+from LeRobot, Copyright 2025 The HuggingFace Inc. team, licensed under the
+Apache License, Version 2.0.
+
+Upstream SmolVLA and LIBERO processor source (LeRobot v0.4.4):
+https://github.com/huggingface/lerobot/tree/8fff0fde7c79f23a93d845d1a50e985de01f8b8a/src/lerobot
+
+The model checkpoint, LIBERO assets, and Qualcomm runtime are obtained
+separately from their respective publishers and carry their own terms.

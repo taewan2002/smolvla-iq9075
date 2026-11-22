@@ -1,0 +1,174 @@
+{
+  "bundle_manifest_sha256": "8673d3fe5f7edf7320901ac31d05c3edb2711f61b76bf6a19b28bb6d4aeb27e1",
+  "machine": "aarch64",
+  "kernel": "6.8.0-1084-qcom",
+  "warmup": 3,
+  "repeats": 1,
+  "threads": 4,
+  "executed_slice": 10,
+  "fixtures": {
+    "libero_10-00-00.npz": "22b1f968f3da6d77c8f5285f3a82a2b1b98669c59ae6832e502d0de59df370d4",
+    "libero_goal-00-00.npz": "daaeb0090656f32769f9dc9fcc0f0924b45b1fed83304c9b56d4f9fbad4fd95e",
+    "libero_object-00-00.npz": "f94bab33d06efd2075fb634af962d2114dd52c4c998ca5e048b33bfb5938ac6e",
+    "libero_spatial-00-00.npz": "bdb0fddac566424f0ae90ada9ad331de40c8dc11f25ba3c4acd5a45523ea0736",
+    "libero_10-01-00.npz": "600a0b0bdcdebde284ba2f61655b4948b20b0cc2a7c2883522caa1a95b147067",
+    "libero_goal-01-00.npz": "23ea7858ff8c77c56124c26af1eae40f048f49b7b8a2497cb50e46b4c318d303",
+    "libero_object-01-00.npz": "4e1c812a74f01cf8ee016575d2161be73ecd90db5b49d22c29d08d87f220ba60",
+    "libero_spatial-01-00.npz": "63792b398527a0b4cb0efb2eba338cecb5bf1bf6f528166b6c5d05cc5ea0168e",
+    "libero_10-02-00.npz": "492e8fcc229e15611d419b3ddedf75805323c41a2ce15f1ceed15f4a6d9f4ccd",
+    "libero_goal-02-00.npz": "c58f4ac60d6f044be805b17d78d1b145c21b007841651fa85b5462a2829eaf63",
+    "libero_object-02-00.npz": "7201fb3a8e55628676dfae4b560b5dc7a3ffcfacb53bdb139af6ba211c7d3c5f",
+    "libero_spatial-02-00.npz": "ffa84f09a0182210bdaf13002ee44dbb8e46697969f8f4a27e7a06c7babd41c8",
+    "libero_10-03-00.npz": "198eca7ca9ec9374b787232ed0ec9349d2916d511ef8413b4484373302cff31f",
+    "libero_goal-03-00.npz": "a4460c81d3963bef8d83fc5354e744067682c3eebbc384cafed4163c2c615acf",
+    "libero_object-03-00.npz": "04bb8ca45f865d76b30ba2249847fde32bd31e96e478b3bde13f9e8f368da7b6",
+    "libero_spatial-03-00.npz": "dec38112d36b862d6db0bfb4e76e1f1f4a71f124468b678ec7a6ce7b5d96f7c8",
+    "libero_10-04-00.npz": "02c07af528a10108655e6291b09fe81eadfb508e81b77e85b6cf5347e68bf448",
+    "libero_goal-04-00.npz": "9124f7ab99241c9a4b4f12be2aeedbedddc2e89e13288836f530eba6abce7b1b",
+    "libero_object-04-00.npz": "28755a184528c8fdb0c77e1634435bf33220afc3eb4ed87bd2a52cbb877c1df4",
+    "libero_spatial-04-00.npz": "06503323ccaa4d0347b003f44dde650681e4393c748846e676aa134f010f7741"
+  },
+  "runs": {
+    "native": {
+      "startup_ms": 26446.2145,
+      "torch": "2.7.1+cpu",
+      "aggregate_ms": {
+        "total_ms": {
+          "median": 42698.3184,
+          "p95": 43880.6359,
+          "max": 44117.1101
+        }
+      },
+      "raw_ms": [
+        {
+          "fixture": "libero_10-00-00.npz",
+          "repeat": 0,
+          "total_ms": 42966.8932959903
+        },
+        {
+          "fixture": "libero_goal-00-00.npz",
+          "repeat": 0,
+          "total_ms": 42437.41288990714
+        },
+        {
+          "fixture": "libero_object-00-00.npz",
+          "repeat": 0,
+          "total_ms": 43221.6529478319
+        },
+        {
+          "fixture": "libero_spatial-00-00.npz",
+          "repeat": 0,
+          "total_ms": 42913.99104800075
+        },
+        {
+          "fixture": "libero_10-01-00.npz",
+          "repeat": 0,
+          "total_ms": 42827.41674594581
+        },
+        {
+          "fixture": "libero_goal-01-00.npz",
+          "repeat": 0,
+          "total_ms": 42479.1702919174
+        },
+        {
+          "fixture": "libero_object-01-00.npz",
+          "repeat": 0,
+          "total_ms": 42316.462555900216
+        },
+        {
+          "fixture": "libero_spatial-01-00.npz",
+          "repeat": 0,
+          "total_ms": 43055.40333292447
+        },
+        {
+          "fixture": "libero_10-02-00.npz",
+          "repeat": 0,
+          "total_ms": 42675.977474078536
+        },
+        {
+          "fixture": "libero_goal-02-00.npz",
+          "repeat": 0,
+          "total_ms": 42015.90664102696
+        },
+        {
+          "fixture": "libero_object-02-00.npz",
+          "repeat": 0,
+          "total_ms": 42557.18555301428
+        },
+        {
+          "fixture": "libero_spatial-02-00.npz",
+          "repeat": 0,
+          "total_ms": 42720.65938008018
+        },
+        {
+          "fixture": "libero_10-03-00.npz",
+          "repeat": 0,
+          "total_ms": 42390.27488208376
+        },
+        {
+          "fixture": "libero_goal-03-00.npz",
+          "repeat": 0,
+          "total_ms": 41906.78955405019
+        },
+        {
+          "fixture": "libero_object-03-00.npz",
+          "repeat": 0,
+          "total_ms": 42233.627883018926
+        },
+        {
+          "fixture": "libero_spatial-03-00.npz",
+          "repeat": 0,
+          "total_ms": 43173.64577599801
+        },
+        {
+          "fixture": "libero_10-04-00.npz",
+          "repeat": 0,
+          "total_ms": 44117.110104998574
+        },
+        {
+          "fixture": "libero_goal-04-00.npz",
+          "repeat": 0,
+          "total_ms": 42599.89116108045
+        },
+        {
+          "fixture": "libero_object-04-00.npz",
+          "repeat": 0,
+          "total_ms": 43159.01937591843
+        },
+        {
+          "fixture": "libero_spatial-04-00.npz",
+          "repeat": 0,
+          "total_ms": 43868.189916945994
+        }
+      ],
+      "vs_native": {
+        "max_absolute": 1.8225845694541931,
+        "mean_absolute": 0.0029899883577932736,
+        "relative_l2": 0.07356436619280309,
+        "mean_absolute_by_action_dim": [
+          0.005295266479253769,
+          0.0028115160539746286,
+          0.004801377765834332,
+          0.0003095888001844287,
+          0.0007910691387951374,
+          0.0006980319845024496,
+          0.006223068282008171
+        ]
+      },
+      "executed_slice_vs_native": {
+        "max_absolute": 0.048236727714538574,
+        "mean_absolute": 0.002242986478127672,
+        "relative_l2": 0.0104130967063118,
+        "mean_absolute_by_action_dim": [
+          0.0060068430937826635,
+          0.003938759975135327,
+          0.0034765301831066607,
+          0.0002635030873352662,
+          0.0006569873949047178,
+          0.00046250039362348615,
+          0.0008957812190055847
+        ]
+      }
+    }
+  }
+}
