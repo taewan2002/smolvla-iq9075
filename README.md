@@ -4,6 +4,16 @@ An ONNX exporter, dual-HTP runtime and paired LIBERO benchmark for `lerobot/smol
 
 [Reproduce the evaluation](docs/reproduce.md) covers installation, model export, board latency measurement and closed-loop evaluation. The board accepts two RGB arrays, task text, low-dimensional state and reproducible initial noise. It returns a full action chunk that LIBERO can execute in simulation.
 
+## Default IQ-9075 deployment
+
+The pinned export uses the original weights and two Euler steps. It predicts 50 actions and records a ten-action execution window.
+
+```bash
+python -m smolvla_iq9075.export --output bundles/libero
+```
+
+The default paced example uses **25 Hz**. The two-step IQ-9075 pilot completed 8 simulated rollouts at this rate with zero empty queue ticks and zero skipped control slots. [Control-rate sweep and commands](docs/chunk-pacing.md#two-step-deployment-rates).
+
 ## IQ-9075 HTP inference
 
 The reference configuration is the original 10-step LeRobot graph on a single QNN HTP in FP16. The installed QNN provider rejected some operators in that graph during session creation. The measured runs each use the same 20 LIBERO observations and time one prediction from two RGB images in memory through 50 denormalized actions, after three warm-up calls.
@@ -62,7 +72,7 @@ SnapFlow adapts the original checkpoint with flow matching and shortcut targets 
 
 ## Use another checkpoint
 
-The exporter derives camera order, model dimensions, action chunk size, normalization statistics and denoising count from the checkpoint. Pass `--checkpoint` and `--vlm` for a compatible SmolVLA snapshot. Use `--flow-steps` to export a different Euler schedule with the same weights. For another architecture, provide an exporter and policy backend with the following inference contract.
+The exporter derives camera order, model dimensions, action chunk size and normalization statistics from the checkpoint. Pass `--checkpoint` and `--vlm` for a compatible SmolVLA snapshot. Local snapshots use their saved denoising and execution counts unless you pass `--flow-steps` or `--execute`. For another architecture, provide an exporter and policy backend with the following inference contract.
 
 ```python
 action_shape = (1, chunk_length, padded_action_width)

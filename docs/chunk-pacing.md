@@ -57,7 +57,7 @@ Compared with plain async, the cosine setting reduced p95 boundary jumps by 72% 
 
 ## Reproduce
 
-Start the IQ-9075 dual-HTP server and forward it to the simulator host as described for the [closed-loop pilot](reproduce.md#run-closed-loop-libero-with-the-board). Use the same pinned LIBERO assets and the original 10-step export. On the simulation workstation:
+Start the IQ-9075 dual-HTP server and forward it to the simulator host as described for the [closed-loop pilot](reproduce.md#run-closed-loop-libero-with-the-board). Use the same pinned LIBERO assets and export the ten-step bundle with `--flow-steps 10 --execute 50`. On the simulation workstation:
 
 ```bash
 export PYTHONHASHSEED=0
@@ -75,3 +75,28 @@ python -m smolvla_iq9075.compare_pacing runs/paced-sync.jsonl runs/paced-async.j
 ```
 
 The comparison verifies the per-episode initial observation hash, simulator asset hashes, seeds, checkpoint and cadence. The benchmark uses initial-state index 0 for each task across all four suites.
+
+## Two-step deployment rates
+
+The sweep runs the default 2-step export on dual HTP FP16 with the original weights. The model predicts 50 actions, and the client applies ten per accepted chunk. The simulator requests the next chunk with eight commands left and uses three-step cosine blending. Every rate uses task 0 and its first published initial state in each LIBERO suite. The 25 and 30 Hz runs also use task 1 and its first initial state. The rate sets both the paced client clock and the simulator control frequency, so the fixed warm-up tick count can produce different initial observations across rates.
+
+| Command rate | Ten-command window | Rollout success | Empty ticks | Skipped ticks | Query p95 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 20 Hz | 500.0 ms | 3/4 | 0 | 0 | 311.6 ms |
+| 25 Hz | 400.0 ms | 6/8 | 0 | 0 | 283.5 ms |
+| 30 Hz | 333.3 ms | 2/8 | 56 | 0 | 330.8 ms |
+| 35 Hz | 285.7 ms | 1/4 | 112 | 0 | 343.6 ms |
+| 40 Hz | 250.0 ms | 1/4 | 298 | 0 | 295.3 ms |
+| 50 Hz | 200.0 ms | 0/4 | 657 | 0 | 314.5 ms |
+
+**25 Hz** was the highest rate with zero empty queue ticks and zero scheduler misses in this sweep. The query p95 excludes startup and includes observation preparation, network transport and board inference. The board-only 2-step p95 of 182.1 ms would give a budget of about 55 actions/s at ten actions per query if prediction were the only delay. The rate sweep measures the workstation-to-board path and simulator command ticks. [Board-only trace](../results/solver-steps/iq9075-2nfe.json) · [Episode logs](../results/control-rate-2nfe/episodes.jsonl) · [Rate summary](../results/control-rate-2nfe/summary.json).
+
+Use the default two-step export and [board service](reproduce.md#run-closed-loop-libero-with-the-board). Forward the board port to the simulator workstation and set the paced client to 25 Hz.
+
+```bash
+python -m smolvla_iq9075.libero --engine remote --url http://127.0.0.1:18075 \
+  --libero-root upstream/LIBERO/libero/libero --execute 10 --control-hz 25 \
+  --refill-actions 8 --overlap 3 --tasks 2 --output runs/dual-2step-25hz.jsonl
+```
+
+For the sweep, use task 0 with `--tasks 1` at 20, 25, 30, 35, 40 and 50 Hz. Add a second run with `--task-start 1 --tasks 1` at 25 and 30 Hz. Use a fresh output file for each rate and task group.

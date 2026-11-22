@@ -28,10 +28,12 @@ EGL needs access to the NVIDIA graphics driver. If you use an NVIDIA container, 
 python -m smolvla_iq9075.export --output bundles/libero
 python -m smolvla_iq9075.libero --engine native \
   --libero-root upstream/LIBERO/libero/libero --device cuda \
-  --execute 10 --inits 1 --save-fixtures runs/fixtures --output runs/native.jsonl
+  --flow-steps 10 --execute 10 --inits 1 --save-fixtures runs/fixtures --output runs/native-10step.jsonl
 ```
 
-Both commands fetch `lerobot/smolvla_libero` at revision `a24f1f3` and the pinned SmolVLM2 config and tokenizer. If Hub Xet downloads stall on your network, run the commands with `HF_HUB_DISABLE_XET=1`. For an offline export or a compatible local checkpoint, supply `--checkpoint DIR --vlm DIR` with both snapshots already present. Each export uses about 1.5 GiB of bundle storage and writes a SHA-256 manifest. Choose an empty output path for each export. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d).
+Both commands fetch `lerobot/smolvla_libero` at revision `a24f1f3` and the pinned SmolVLM2 config and tokenizer. The pinned deployment export uses two Euler steps and records ten executed actions per 50-action prediction. The fixture generator saves ten-step CUDA outputs as the comparison reference. To export the archived ten-step bundle configuration, pass `--flow-steps 10 --execute 50` and choose a separate output directory. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d).
+
+If Hub Xet downloads stall, set `HF_HUB_DISABLE_XET=1`. An export using a local checkpoint and VLM snapshot uses their settings by default. To export the pinned weights offline with the deployment settings, pass `--checkpoint DIR --vlm DIR --flow-steps 2 --execute 10`. Each export uses about 1.5 GiB and writes a SHA-256 manifest. Choose an unused output path.
 
 ```bash
 scp -r bundles/libero runs/fixtures user@iq9075:~/
@@ -58,7 +60,7 @@ The timers start with RGB arrays already available and end after action scaling.
 On the workstation, export the same checkpoint with rank-four prefill K/V outputs and copy the bundle to the board.
 
 ```bash
-python -m smolvla_iq9075.export --adreno-compatible --output bundles/libero-adreno
+python -m smolvla_iq9075.export --flow-steps 10 --execute 50 --adreno-compatible --output bundles/libero-adreno
 scp -r bundles/libero-adreno user@iq9075:~/
 ```
 
@@ -141,10 +143,13 @@ ssh -N -L 127.0.0.1:18075:127.0.0.1:18075 user@iq9075
 Run the paired episodes in the original evaluation environment.
 
 ```bash
+python -m smolvla_iq9075.libero --engine native \
+  --libero-root upstream/LIBERO/libero/libero --device cuda \
+  --flow-steps 2 --execute 10 --inits 1 --output runs/native-2step.jsonl
 python -m smolvla_iq9075.libero --engine remote --url http://127.0.0.1:18075 \
   --libero-root upstream/LIBERO/libero/libero \
   --execute 10 --inits 1 --output runs/dual.jsonl
-python -m smolvla_iq9075.compare runs/native.jsonl runs/dual.jsonl
+python -m smolvla_iq9075.compare runs/native-2step.jsonl runs/dual.jsonl
 ```
 
-Both rollouts predict 50 actions with 10 flow steps and apply the first 10 actions before observing again. The published checkpoint saves `n_action_steps=50`. Pass `--execute 50` to both runners to use that cadence. The 40-episode protocol uses one fixed published initial state for each task across LIBERO Spatial, Object, Goal and Long. Increase `--inits` in both commands for additional initial states. The comparison validates seed, initial observation hash, checkpoint hash, task assets and execution length for every episode before computing success rates. The episode log records simulator wall time, including RPC for remote runs. The board latency benchmark measures inference locally.
+Both rollout commands predict 50 actions with two Euler steps and apply ten before observing again. The 40-episode protocol uses one published initial state for each task across LIBERO Spatial, Object, Goal and Long. Increase `--inits` for additional states. The comparison checks the initial observation, seeds, checkpoint, task assets and execution window. The episode log records simulator wall time, including RPC for remote runs. The [paced deployment test](chunk-pacing.md) measures command deadlines and queue underruns.

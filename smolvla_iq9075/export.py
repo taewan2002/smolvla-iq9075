@@ -191,7 +191,7 @@ def input_contract(config, wrapper):
 
 
 @torch.inference_mode()
-def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None, adreno_compatible=False):
+def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None, adreno_compatible=False, *, execute=None):
     from lerobot.policies.smolvla.modeling_smolvla import create_sinusoidal_pos_embedding
 
     torch.set_num_threads(4)
@@ -201,6 +201,10 @@ def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None, adre
     config = native.policy.config
     if flow_steps is not None:
         config.num_steps = flow_steps
+    if execute is None:
+        execute = config.n_action_steps
+    if not 1 <= execute <= config.chunk_size:
+        raise ValueError("Execution window must fit the predicted chunk")
     wrapper = core.vlm_with_expert
     size = input_contract(config, wrapper)
     model = wrapper.get_vlm_model()
@@ -299,7 +303,7 @@ def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None, adre
         "format": 1, "model": provenance, "images": image_shapes, "image_tokens": image_tokens.shape[1],
         "text_length": config.tokenizer_max_length, "prefix_length": length, "head_width": width,
         "heads_per_group": groups, "state_dim": config.max_state_dim, "action_dim": len(am),
-        "action_shape": [1, chunk, config.max_action_dim], "execute": config.n_action_steps,
+        "action_shape": [1, chunk, config.max_action_dim], "execute": execute,
         "denoising_steps": config.num_steps, "prefill": parts, "cross_layers": cross,
         "token_scale": math.sqrt(text.embed_tokens.embedding_dim),
         "checkpoint_sha256": sha256(checkpoint / "model.safetensors"),
@@ -317,11 +321,14 @@ def main():
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--vlm", type=Path)
     parser.add_argument("--prefill-layers", type=int, default=6)
-    parser.add_argument("--flow-steps", type=int, help="Override Euler steps while retaining the checkpoint weights")
+    parser.add_argument("--flow-steps", type=int, help="Override Euler steps (pinned deployment bundle defaults to 2)")
+    parser.add_argument("--execute", type=int, help="Execution window in the bundle manifest (pinned default: 10)")
     parser.add_argument("--adreno-compatible", action="store_true", help="Export rank-four prefill K/V outputs for QNN GPU")
     args = parser.parse_args()
     if args.flow_steps is not None and args.flow_steps < 1:
         parser.error("--flow-steps must be positive")
+    if args.execute is not None and args.execute < 1:
+        parser.error("--execute must be positive")
     if args.prefill_layers <= 0 or bool(args.checkpoint) != bool(args.vlm):
         parser.error("Use a positive partition size and supply both local paths or neither")
     if args.checkpoint:
@@ -330,7 +337,12 @@ def main():
     else:
         checkpoint, vlm = snapshots()
         provenance = {"id": MODEL, "revision": REVISION, "vlm": VLM, "vlm_revision": VLM_REVISION}
-    export(checkpoint, vlm, args.output, args.prefill_layers, provenance, args.flow_steps, args.adreno_compatible)
+        if args.flow_steps is None:
+            args.flow_steps = 2
+        if args.execute is None:
+            args.execute = 10
+    export(checkpoint, vlm, args.output, args.prefill_layers, provenance, args.flow_steps, args.adreno_compatible,
+           execute=args.execute)
 
 
 if __name__ == "__main__":
