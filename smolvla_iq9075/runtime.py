@@ -108,13 +108,15 @@ class EdgePolicy:
             raise ValueError(f"Unknown backend: {backend}")
         self.backend = backend
         self.action_shape = tuple(meta["action_shape"])
+        self.graph_precision = meta.get("graph_precision", "fp32")
+        self.graph_dtype = np.float16 if self.graph_precision == "fp16" else np.float32
         self.width = meta["head_width"]
         self.groups = meta["heads_per_group"]
         self.tokenizer = Tokenizer.from_file(str(bundle / "tokenizer.json"))
         self.tokenizer.no_padding()
         self.tokenizer.enable_truncation(max_length=meta["text_length"])
         self.table = np.load(bundle / "token_embedding.npy", mmap_mode="r")
-        self.time = np.load(bundle / "time.npy")
+        self.time = np.load(bundle / "time.npy").astype(self.graph_dtype, copy=False)
         self.state_weight = np.load(bundle / "state_weight.npy")
         self.state_bias = np.load(bundle / "state_bias.npy")
         for field, name in (("resize", "resize"), ("stats", "stats"), ("projection", "cross_projection")):
@@ -175,7 +177,7 @@ class EdgePolicy:
         if noise.dtype != np.float32 or not np.isfinite(state).all() or not np.isfinite(noise).all():
             raise ValueError("Use finite state values and finite float32 initial noise")
 
-        frames = [self.prepare_rgb(image) for image in rgb]
+        frames = [self.prepare_rgb(image).astype(self.graph_dtype, copy=False) for image in rgb]
         ids = self.tokenizer.encode(task if task.endswith("\n") else task + "\n").ids
         language = np.zeros((1, meta["text_length"], self.table.shape[-1]), dtype=np.float32)
         language[:, :len(ids)] = self.table[ids]
@@ -198,7 +200,7 @@ class EdgePolicy:
         times["vision_ms"] = milliseconds(stage)
 
         stage = perf_counter_ns()
-        visual = np.concatenate(tokens, axis=1)
+        visual = np.concatenate(tokens, axis=1).astype(np.float32, copy=False)
         hidden = np.concatenate((visual * meta["token_scale"], language * meta["token_scale"], state_token), axis=1)
         valid = np.ones(meta["prefix_length"], dtype=bool)
         valid[visual.shape[1] + len(ids):-1] = False
@@ -206,13 +208,16 @@ class EdgePolicy:
         allowed[:-1, -1] = False
         mask = bias(allowed, self.groups)
         sine, cosine = rotary(valid.cumsum() - 1, self.width)
+        hidden, mask, sine, cosine = (
+            array.astype(self.graph_dtype, copy=False) for array in (hidden, mask, sine, cosine)
+        )
         keys, values = [], []
         for session in self.prefill:
             candidates = {"hidden": hidden, "mask": mask, "sine": sine, "cosine": cosine}
             hidden, key, value = session.run(None, {item.name: candidates[item.name] for item in session.get_inputs()})
             keys.append(key)
             values.append(value)
-        keys, values = np.concatenate(keys), np.concatenate(values)
+        keys, values = (np.concatenate(cache).astype(np.float32, copy=False) for cache in (keys, values))
         if keys.ndim == 4:
             # Restore the singleton batch dimension expected by the Action Expert.
             keys, values = keys[:, None], values[:, None]
@@ -238,14 +243,18 @@ class EdgePolicy:
                    "cross_sine": cross_sine, "cross_cosine": cross_cosine,
                    "self_mask": bias(self_mask, self.groups), "cross_mask": bias(cross_mask, self.groups),
                    "keys": keys, "values": values}
-        context = {key: value for key, value in context.items() if key in self.action_inputs}
+        context = {
+            key: value.astype(self.graph_dtype, copy=False)
+            for key, value in context.items() if key in self.action_inputs
+        }
         times["cache_ms"] = milliseconds(stage)
 
         stage = perf_counter_ns()
-        result = noise
+        result = noise.astype(self.graph_dtype, copy=False)
         for step in self.time:
             result = self.action.run(None, {"noise": result, "time": step, **context})[0]
-        action = result[..., :meta["action_dim"]] * stats["action_scale"] + stats["action_mean"]
+        action = result[..., :meta["action_dim"]].astype(np.float32, copy=False)
+        action = action * stats["action_scale"] + stats["action_mean"]
         if not np.isfinite(action).all():
             raise FloatingPointError("Inference returned a non-finite action")
         times["action_ms"] = milliseconds(stage)

@@ -72,6 +72,17 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
 
 The runtime restores the singleton batch dimension before passing the K/V arrays to the Action Expert. It selects the QNN GPU library explicitly, disables CPU fallback for all graph sessions, and records the opened GPU device nodes in the report. [QNN GPU backend documentation](https://github.com/onnxruntime/onnxruntime-qnn/blob/main/docs/execution_providers/QNN-ExecutionProvider.md#running-a-model-with-qnn-eps-gpu-backend).
 
+For the FP16 pass, convert the FP32 Adreno bundle on the workstation. This keeps the checkpoint and ten Euler steps. The converter expresses reciprocal as division by an explicit FP16 constant for QNN GPU. It rescales the RMSNorm calculation so both the epsilon constant and its contribution to zero rows are normal FP16 values. It writes a manifest that identifies the source FP32 bundle.
+
+```bash
+python -m pip install onnxconverter-common==1.16.0
+python -m smolvla_iq9075.adreno_fp16 --bundle bundles/libero-adreno \
+  --output bundles/libero-adreno-fp16
+scp -r bundles/libero-adreno-fp16 user@iq9075:~/
+```
+
+Use the same board command, with `--bundle ~/libero-adreno-fp16 --output runs/iq9075-adreno-fp16.json`. The runtime feeds FP16 tensors to the graph sessions and uses FP32 for the host K/V projections and action scaling.
+
 ## Native PyTorch latency on IQ-9075
 
 Use a separate CPU-only Python environment for the LeRobot reference. On the board, install the matching ARM64 wheels from PyPI and use the same pinned LeRobot source checkout described above.

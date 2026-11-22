@@ -113,6 +113,7 @@ def main():
                        "qnn_provider": policy.qnn_version}
             if engine == "gpu":
                 details["gpu_nodes"] = policy.gpu_devices
+                details["graph_precision"] = policy.graph_precision
         startup_ms = (perf_counter() - begin) * 1000
         try:
             outputs, timings, aggregate = measure(predict, files, args.repeats, args.warmup)

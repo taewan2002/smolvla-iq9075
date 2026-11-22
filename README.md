@@ -12,14 +12,15 @@ The original 10-step checkpoint went from **28,749.1 ms on PyTorch CPU to 249.7 
 | --- | ---: | ---: | ---: | ---: |
 | Native LeRobot, PyTorch CPU | 10 | 28,749.1 ms | 29,915.4 ms | 1.0× |
 | ONNX Runtime CPU, FP32 | 10 | 5,812.8 ms | 6,001.3 ms | 4.9× |
-| QNN Adreno 663 GPU, FP32 | 10 | 27,900.8 ms | 27,956.8 ms | 1.03× |
+| QNN Adreno 663 GPU, FP32 recheck | 10 | 27,891.6 ms | 27,919.3 ms | 1.03× |
+| QNN Adreno 663 GPU, FP16 | 10 | 21,540.7 ms | 21,577.8 ms | 1.33× |
 | QNN single HTP, FP16 | 10 | 323.2 ms | 329.6 ms | 89.0× |
 | QNN dual HTP, FP16 | 10 | 249.7 ms | 254.4 ms | 115.1× |
 | QNN dual HTP, FP16, undistilled | 2 | **173.1 ms** | **176.9 ms** | **166.1×** |
 
 The 10-step rows use the same checkpoint weights and denoising schedule. The last row keeps the weights and cuts the Euler schedule from ten updates to two. [Benchmark protocol and raw timings](docs/results.md).
 
-The Adreno FP32 run opened the GPU device and ran the ONNX graphs with CPU fallback disabled. It took **4.8× as long as ORT CPU**, spending **20.66 s** of the **27.90 s** median on the two vision passes. The Adreno-compatible export changes the prefill K/V layout and retains the original weights and Action Expert graph. [Adreno benchmark details](docs/results.md#adreno-gpu-comparison).
+The Adreno FP32 recheck reproduced the original **27,900.8 ms** median with a **0.03%** difference on the same 20 inputs. FP16 reduced two-view vision latency from **20,649.7 to 15,777.5 ms (23.6%)** and total latency by **22.8%**. The FP16 GPU pass still took **66.6×** as long as single HTP and **86.3×** as long as dual HTP. The Adreno runs used the GPU device with graph CPU fallback disabled. [Adreno benchmark details](docs/results.md#adreno-gpu-comparison).
 
 ## What changed
 
