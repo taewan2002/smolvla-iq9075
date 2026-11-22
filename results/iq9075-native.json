@@ -1,5 +1,5 @@
 {
-  "bundle_manifest_sha256": "8673d3fe5f7edf7320901ac31d05c3edb2711f61b76bf6a19b28bb6d4aeb27e1",
+  "bundle_manifest_sha256": "f99249439c7c8faffcd3186a5a8a14af5f8b9d0b8d75b993b7f16fd172e44034",
   "machine": "aarch64",
   "kernel": "6.8.0-1084-qcom",
   "warmup": 3,
@@ -7,166 +7,166 @@
   "threads": 4,
   "executed_slice": 10,
   "fixtures": {
-    "libero_10-00-00.npz": "22b1f968f3da6d77c8f5285f3a82a2b1b98669c59ae6832e502d0de59df370d4",
-    "libero_goal-00-00.npz": "daaeb0090656f32769f9dc9fcc0f0924b45b1fed83304c9b56d4f9fbad4fd95e",
-    "libero_object-00-00.npz": "f94bab33d06efd2075fb634af962d2114dd52c4c998ca5e048b33bfb5938ac6e",
-    "libero_spatial-00-00.npz": "bdb0fddac566424f0ae90ada9ad331de40c8dc11f25ba3c4acd5a45523ea0736",
-    "libero_10-01-00.npz": "600a0b0bdcdebde284ba2f61655b4948b20b0cc2a7c2883522caa1a95b147067",
-    "libero_goal-01-00.npz": "23ea7858ff8c77c56124c26af1eae40f048f49b7b8a2497cb50e46b4c318d303",
-    "libero_object-01-00.npz": "4e1c812a74f01cf8ee016575d2161be73ecd90db5b49d22c29d08d87f220ba60",
-    "libero_spatial-01-00.npz": "63792b398527a0b4cb0efb2eba338cecb5bf1bf6f528166b6c5d05cc5ea0168e",
-    "libero_10-02-00.npz": "492e8fcc229e15611d419b3ddedf75805323c41a2ce15f1ceed15f4a6d9f4ccd",
-    "libero_goal-02-00.npz": "c58f4ac60d6f044be805b17d78d1b145c21b007841651fa85b5462a2829eaf63",
-    "libero_object-02-00.npz": "7201fb3a8e55628676dfae4b560b5dc7a3ffcfacb53bdb139af6ba211c7d3c5f",
-    "libero_spatial-02-00.npz": "ffa84f09a0182210bdaf13002ee44dbb8e46697969f8f4a27e7a06c7babd41c8",
-    "libero_10-03-00.npz": "198eca7ca9ec9374b787232ed0ec9349d2916d511ef8413b4484373302cff31f",
-    "libero_goal-03-00.npz": "a4460c81d3963bef8d83fc5354e744067682c3eebbc384cafed4163c2c615acf",
-    "libero_object-03-00.npz": "04bb8ca45f865d76b30ba2249847fde32bd31e96e478b3bde13f9e8f368da7b6",
-    "libero_spatial-03-00.npz": "dec38112d36b862d6db0bfb4e76e1f1f4a71f124468b678ec7a6ce7b5d96f7c8",
-    "libero_10-04-00.npz": "02c07af528a10108655e6291b09fe81eadfb508e81b77e85b6cf5347e68bf448",
-    "libero_goal-04-00.npz": "9124f7ab99241c9a4b4f12be2aeedbedddc2e89e13288836f530eba6abce7b1b",
-    "libero_object-04-00.npz": "28755a184528c8fdb0c77e1634435bf33220afc3eb4ed87bd2a52cbb877c1df4",
-    "libero_spatial-04-00.npz": "06503323ccaa4d0347b003f44dde650681e4393c748846e676aa134f010f7741"
+    "libero_10-00-00.npz": "53e33059735c5fa3e54614b33ecba5251a34d3d3e049d15886eaf71aeea0e4d9",
+    "libero_goal-00-00.npz": "2d85a3e021cf35330d854452520f241cdfedcfd3b90cb19816ec8108784b27ae",
+    "libero_object-00-00.npz": "20d0c4f2f102298c6675c9f31bcf4fc7a4c474593eb6aabbe100790d90564389",
+    "libero_spatial-00-00.npz": "10cc9c1dfa88c6f073dd6b13c6c85980146527ea1799c0c77494f56908430f43",
+    "libero_10-01-00.npz": "59ef9c9e34eb29c7022e292703d1cf2a440f743dc2e243e6af86ea8db6d1534a",
+    "libero_goal-01-00.npz": "80543d52ba1ffc99e3e6d83cec40bb36d7d2a668e04b7fa702b08db2905023b2",
+    "libero_object-01-00.npz": "2701a7d98c6d20860b09a2de9b6d503c6bc11b6414b1fd8cb824a073596a8489",
+    "libero_spatial-01-00.npz": "f0e59080b014783f484972fc146808eb95857bd0db2a0aefa6bf315c4daec9c8",
+    "libero_10-02-00.npz": "390c6f4ccb48c773f9ee9423a0f4d8250259e552d6d79c0836ab40e78e66604a",
+    "libero_goal-02-00.npz": "aa61bddb7296ef5d4807dfc54aa5ea4166e32b7ab9cdd855d9521a3a27eaef9d",
+    "libero_object-02-00.npz": "cae1153920d56c3f052837734fb32f918675a21eea6468e4b4ae19a0b0230832",
+    "libero_spatial-02-00.npz": "149b377025d1a6a18896db0e473f5a22570ceeb2cdfa43c596d8a198b2078c4a",
+    "libero_10-03-00.npz": "1735fc8bc5b0ff2dc5add9e8ab504e093b15d6ec8242ac3780b4360a407becd2",
+    "libero_goal-03-00.npz": "3f927a9e1c6e9527d0dedd138fe8832f006f6d2df64704774fb954ccf44bebf9",
+    "libero_object-03-00.npz": "16ede73c96db5086d2117d077c482734c90651a238f2f9b91f7a8471d30dd5a8",
+    "libero_spatial-03-00.npz": "411229aa0d6b118aad4277dd485f67cf5d025c7f53952666ee7a35a7dcaf1a40",
+    "libero_10-04-00.npz": "2eb47fd89a2aab69a8857ed6eab5e680d59d7d3dd232f638c460c26a4d71e035",
+    "libero_goal-04-00.npz": "ea2463c52ac409c3c84eb106949de84717d437b20edf17c611b828fa2fb811fa",
+    "libero_object-04-00.npz": "3beca3419782f4d5debf1dbec0627b19e978141a999a4014e0dd631b226abe25",
+    "libero_spatial-04-00.npz": "c83b9e76d20a51f2374980487c119b1a116cba370a207433c7addaf21a734826"
   },
   "runs": {
     "native": {
-      "startup_ms": 26446.2145,
+      "startup_ms": 29622.4074,
       "torch": "2.7.1+cpu",
       "aggregate_ms": {
         "total_ms": {
-          "median": 42698.3184,
-          "p95": 43880.6359,
-          "max": 44117.1101
+          "median": 28749.1211,
+          "p95": 29915.4164,
+          "max": 29964.8244
         }
       },
       "raw_ms": [
         {
           "fixture": "libero_10-00-00.npz",
           "repeat": 0,
-          "total_ms": 42966.8932959903
+          "total_ms": 29964.824427850544
         },
         {
           "fixture": "libero_goal-00-00.npz",
           "repeat": 0,
-          "total_ms": 42437.41288990714
+          "total_ms": 29326.994171133265
         },
         {
           "fixture": "libero_object-00-00.npz",
           "repeat": 0,
-          "total_ms": 43221.6529478319
+          "total_ms": 28456.586017040536
         },
         {
           "fixture": "libero_spatial-00-00.npz",
           "repeat": 0,
-          "total_ms": 42913.99104800075
+          "total_ms": 28343.000825028867
         },
         {
           "fixture": "libero_10-01-00.npz",
           "repeat": 0,
-          "total_ms": 42827.41674594581
+          "total_ms": 28868.674407945946
         },
         {
           "fixture": "libero_goal-01-00.npz",
           "repeat": 0,
-          "total_ms": 42479.1702919174
+          "total_ms": 28737.716193078086
         },
         {
           "fixture": "libero_object-01-00.npz",
           "repeat": 0,
-          "total_ms": 42316.462555900216
+          "total_ms": 28719.034384936094
         },
         {
           "fixture": "libero_spatial-01-00.npz",
           "repeat": 0,
-          "total_ms": 43055.40333292447
+          "total_ms": 28713.218158110976
         },
         {
           "fixture": "libero_10-02-00.npz",
           "repeat": 0,
-          "total_ms": 42675.977474078536
+          "total_ms": 28697.176703019068
         },
         {
           "fixture": "libero_goal-02-00.npz",
           "repeat": 0,
-          "total_ms": 42015.90664102696
+          "total_ms": 28760.525981895626
         },
         {
           "fixture": "libero_object-02-00.npz",
           "repeat": 0,
-          "total_ms": 42557.18555301428
+          "total_ms": 28350.749562960118
         },
         {
           "fixture": "libero_spatial-02-00.npz",
           "repeat": 0,
-          "total_ms": 42720.65938008018
+          "total_ms": 28805.110656889156
         },
         {
           "fixture": "libero_10-03-00.npz",
           "repeat": 0,
-          "total_ms": 42390.27488208376
+          "total_ms": 28864.581926958635
         },
         {
           "fixture": "libero_goal-03-00.npz",
           "repeat": 0,
-          "total_ms": 41906.78955405019
+          "total_ms": 28527.255641063675
         },
         {
           "fixture": "libero_object-03-00.npz",
           "repeat": 0,
-          "total_ms": 42233.627883018926
+          "total_ms": 27833.2229279913
         },
         {
           "fixture": "libero_spatial-03-00.npz",
           "repeat": 0,
-          "total_ms": 43173.64577599801
+          "total_ms": 28201.231183018535
         },
         {
           "fixture": "libero_10-04-00.npz",
           "repeat": 0,
-          "total_ms": 44117.110104998574
+          "total_ms": 29280.238883104175
         },
         {
           "fixture": "libero_goal-04-00.npz",
           "repeat": 0,
-          "total_ms": 42599.89116108045
+          "total_ms": 29250.03794883378
         },
         {
           "fixture": "libero_object-04-00.npz",
           "repeat": 0,
-          "total_ms": 43159.01937591843
+          "total_ms": 29912.816027877852
         },
         {
           "fixture": "libero_spatial-04-00.npz",
           "repeat": 0,
-          "total_ms": 43868.189916945994
+          "total_ms": 29326.90707105212
         }
       ],
       "vs_native": {
-        "max_absolute": 1.8225845694541931,
-        "mean_absolute": 0.0029899883577932736,
-        "relative_l2": 0.07356436619280309,
+        "max_absolute": 0.09334152936935425,
+        "mean_absolute": 0.0007367455038599604,
+        "relative_l2": 0.003488500732410361,
         "mean_absolute_by_action_dim": [
-          0.005295266479253769,
-          0.0028115160539746286,
-          0.004801377765834332,
-          0.0003095888001844287,
-          0.0007910691387951374,
-          0.0006980319845024496,
-          0.006223068282008171
+          0.0013200328722596168,
+          0.0010570744574069978,
+          0.0011663305647671223,
+          0.00012453056147205643,
+          0.00023699295916594564,
+          0.00022695207921788097,
+          0.0010253050327301025
         ]
       },
       "executed_slice_vs_native": {
-        "max_absolute": 0.048236727714538574,
-        "mean_absolute": 0.002242986478127672,
-        "relative_l2": 0.0104130967063118,
+        "max_absolute": 0.00603407621383667,
+        "mean_absolute": 0.0006611645571371939,
+        "relative_l2": 0.002325559010256957,
         "mean_absolute_by_action_dim": [
-          0.0060068430937826635,
-          0.003938759975135327,
-          0.0034765301831066607,
-          0.0002635030873352662,
-          0.0006569873949047178,
-          0.00046250039362348615,
-          0.0008957812190055847
+          0.0011182885617017746,
+          0.0011761542409658432,
+          0.000909155048429966,
+          0.00012937564781168476,
+          0.0002479519043117762,
+          0.0001863992295693606,
+          0.0008608272671699524
         ]
       }
     }

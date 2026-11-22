@@ -1,5 +1,5 @@
 {
-  "teacher_checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "teacher_checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
   "teacher_steps": 10,
   "student_steps": 2,
   "updates": 200,
@@ -12,13 +12,13 @@
   "heldout_demos": 400,
   "undistilled_2step": {
     "observations": 64,
-    "first10_relative_l2": 0.2234618365764618,
-    "full_relative_l2": 0.2554765045642853
+    "first10_relative_l2": 0.07065057009458542,
+    "full_relative_l2": 0.06433572620153427
   },
   "distilled_2step": {
     "observations": 64,
-    "first10_relative_l2": 0.14354519546031952,
-    "full_relative_l2": 0.1926315575838089
+    "first10_relative_l2": 0.10297483205795288,
+    "full_relative_l2": 0.08573376387357712
   },
-  "student_checkpoint_sha256": "0fa9df66bceb7ff3467bd1f06ccaf042f3c8c0b4c59f843be7a39df1eb8ef7fa"
+  "student_checkpoint_sha256": "bd35ef0c94d3c8d436d769c774d79ef14bfe1505b1af6fb0f14c73c95e592467"
 }

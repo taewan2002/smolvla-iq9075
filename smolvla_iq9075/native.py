@@ -2,10 +2,10 @@
 import hashlib
 from pathlib import Path
 
-MODEL = "HuggingFaceVLA/smolvla_libero"
-REVISION = "6721902bc4d61e50a3bfdb11dfb4cb626f05d102"
-VLM = "HuggingFaceTB/SmolVLM2-500M-Instruct"
-VLM_REVISION = "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+MODEL = "lerobot/smolvla_libero"
+REVISION = "a24f1f380461b665158d52acd140152c79e8b36d"
+VLM = "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+VLM_REVISION = "4cde9d208e19519c36917aa170fffc7e381aa0ad"
 
 
 def sha256(path):

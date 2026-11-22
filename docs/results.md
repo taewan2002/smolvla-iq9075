@@ -1,57 +1,55 @@
 # IQ-9075 benchmark results
 
-The study used the public [SmolVLA LIBERO checkpoint at revision `6721902`](https://huggingface.co/HuggingFaceVLA/smolvla_libero/tree/6721902bc4d61e50a3bfdb11dfb4cb626f05d102), with 50 predicted actions per inference and ten denoising steps. The exported model and all rollouts use identical checkpoint weights. The [export manifest](../results/export-manifest.json) records file checksums and tool versions.
+The latency and closed-loop board tests use `lerobot/smolvla_libero` at revision `a24f1f3`, with 50 predicted actions and ten denoising steps. The export and native reference use the same checkpoint weights. The manifest records file checksums and library versions. This export loaded a local copy of the pinned snapshot, and its checkpoint SHA-256 agrees with the evaluation protocol. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d) · [Export manifest](../results/export-manifest.json) · [Evaluation protocol](../results/libero-full/protocol.json).
 
 ## On-device latency
 
-Measurements were collected on a Qualcomm IQ-9075 EVK with eight Cortex-A78C CPU cores and two HTPs. All engines received the first policy observation from the same 20 LIBERO episodes, covering task IDs 0–4 in each of the four suites. The board processed one observation at a time after three warm-ups per engine, with four ORT intra-op threads and one OpenBLAS thread for the host projections. Time starts with both RGB arrays in memory and ends with all 50 denormalized actions. The eager LeRobot reference used four PyTorch CPU threads and the same inputs. See the [ONNX and QNN raw timings](../results/iq9075.json) and [native PyTorch raw timings](../results/iq9075-native.json).
+Measurements used a Qualcomm IQ-9075 EVK with eight Cortex-A78C CPU cores and two HTPs. All engines received the same first observation from task IDs 0–4 in each LIBERO suite, for 20 observations total. The board ran three warm-ups per engine. ORT and PyTorch used four inference threads, with one OpenBLAS thread for the host projections. Timing starts with both RGB arrays in memory and ends with 50 denormalized actions. Camera capture, transport and motor control are outside this measurement. [ONNX and QNN timings](../results/iq9075.json) · [Native PyTorch timings](../results/iq9075-native.json).
 
 | IQ-9075 engine | Median | p95 | Maximum | Cold initialization |
 | --- | ---: | ---: | ---: | ---: |
-| Native LeRobot (PyTorch CPU) | 42,698.3 ms | 43,880.6 ms | 44,117.1 ms | 26.4 s |
-| ORT CPU FP32 | 5,958.1 ms | 6,346.1 ms | 6,393.3 ms | 4.3 s |
-| QNN single HTP FP16 | 463.8 ms | 473.1 ms | 474.0 ms | 96.7 s |
-| QNN dual HTP FP16 | **394.1 ms** | **405.2 ms** | **406.7 ms** | 105.7 s |
+| Native LeRobot (PyTorch CPU) | 28,749.1 ms | 29,915.4 ms | 29,964.8 ms | 29.6 s |
+| ORT CPU FP32 | 5,812.8 ms | 6,001.3 ms | 6,056.4 ms | 3.0 s |
+| QNN single HTP FP16 | 323.2 ms | 329.6 ms | 329.7 ms | 64.2 s |
+| QNN dual HTP FP16 | 249.7 ms | 254.4 ms | 255.1 ms | 78.6 s |
 
-The dual schedule was **108.3×** faster than eager LeRobot on the board CPU and reduced median latency by **93.4%** versus ORT CPU, a **15.1×** speedup on the same exported graphs. It reduced median latency by **15.0%** versus single HTP. Both HTP device nodes opened during the dual run. QNN FP16 produced identical aggregate action errors with both HTP schedules.
+Dual HTP ran **115.1×** faster than eager LeRobot on the IQ-9075 CPU and **23.3×** faster than ORT CPU on the same exported graphs. Median latency fell **22.7%** compared with single HTP. Both HTP device nodes opened during the dual run.
 
 | Median per stage | ORT CPU | Single HTP | Dual HTP |
 | --- | ---: | ---: | ---: |
-| Preprocessing | 18.2 ms | 18.9 ms | 18.5 ms |
-| Vision, two views | 3,574.0 ms | 148.8 ms | 76.5 ms |
-| Language prefill | 1,025.4 ms | 72.5 ms | 73.4 ms |
-| Host K/V projections and masks | 38.4 ms | 43.1 ms | 42.9 ms |
-| Action Expert and output scaling | 1,194.4 ms | 180.8 ms | 183.0 ms |
+| Preprocessing | 18.4 ms | 18.1 ms | 18.0 ms |
+| Vision, two views | 4,069.7 ms | 148.4 ms | 76.2 ms |
+| Language prefill | 561.2 ms | 35.6 ms | 35.8 ms |
+| Host K/V projections and masks | 21.2 ms | 22.3 ms | 21.3 ms |
+| Action Expert and output scaling | 1,154.1 ms | 98.3 ms | 98.0 ms |
 
-Each stage reports its own median. Cold initialization includes ONNX session creation and HTP graph finalization and sits outside the warm inference timers.
+Each stage has its own median. Cold initialization includes session creation and HTP graph finalization outside the warm inference timers.
 
 ## Action agreement on fixed observations
 
-Relative L2 is the pooled L2 norm of the output difference divided by the pooled L2 norm of the native LeRobot actions. This compares denormalized values with identical RGB, state, instruction and initial noise.
+Relative L2 divides the pooled L2 norm of the error by the pooled L2 norm of the native CUDA output. Each comparison uses the same RGB images, state, task text and initial noise. Action values are denormalized.
 
 | Against native LeRobot on CUDA | First 10 actions | Full 50-action chunk |
 | --- | ---: | ---: |
-| ORT CPU FP32 | 0.96% | 9.83% |
-| QNN dual HTP FP16 | 1.44% | 13.37% |
+| Native LeRobot (PyTorch CPU) | 0.23% | 0.35% |
+| ORT CPU FP32 | 0.29% | 0.28% |
+| QNN single HTP FP16 | 0.46% | 3.08% |
+| QNN dual HTP FP16 | 0.46% | 3.08% |
 
-The dual HTP mean absolute error was 0.00328 for the first 10 actions and 0.00657 across all 50. The full-chunk error is sensitive to large gripper differences in the later part of the prediction. In the FP32 export check, for example, the largest difference was 1.99 on the gripper dimension at action index 39 for Goal task 1 (zero-based). The paired rollouts execute the first 10 actions, and the full-chunk results matter for applications using a longer execution horizon.
+The dual HTP mean absolute error was 0.00122 for the first ten actions and 0.00148 over all 50. The closed-loop pilot evaluates the first ten actions from each prediction.
 
 ## Closed-loop IQ-9075 pilot
 
-See the [full native LeRobot evaluation](libero-full.md) for the 2,000-episode policy scores.
-
-The native comparison uses LeRobot v0.4.4 on an NVIDIA RTX PRO 6000 Blackwell. The IQ-9075 candidate uses dual HTP through the same export as the latency study. The same GPU host renders both runs. The separate PyTorch CPU timing run uses the board. Both backends receive the same task, initial state, action noise seed and simulator settings. Each suite uses all ten tasks with initial-state index 0. Actions use LIBERO's relative controller, and each run allows 280, 280, 300 or 520 action ticks for Spatial, Object, Goal or Long respectively, after ten warm-up ticks.
-
-The model predicts 50 actions and both runners execute ten per query before taking another observation. The checkpoint's default is one action per query. The fixed-state pilot and the execution cadence define the scope of the score.
+The native comparison runs LeRobot v0.4.4 on an NVIDIA RTX PRO 6000 Blackwell. The IQ-9075 candidate uses the dual-HTP export from the timing study. Both runs render the same LIBERO tasks on the GPU host and use initial-state index 0 for all 40 tasks. The action budgets for Spatial, Object, Goal and Long are 280, 280, 300 and 520 ticks, respectively, following ten warm-up ticks. Both policies predict 50 actions and execute ten before the next observation. For the full LIBERO score, see the [2,000-episode native evaluations](libero-full.md).
 
 | Suite | Native LeRobot | IQ-9075 dual HTP | Change |
 | --- | ---: | ---: | ---: |
-| Spatial | 8/10 | 9/10 | +10 pp |
-| Object | 9/10 | 8/10 | -10 pp |
-| Goal | 6/10 | 5/10 | -10 pp |
-| Long | 3/10 | 4/10 | +10 pp |
-| **All** | 26/40 | 26/40 | +0 pp |
+| Spatial | 9/10 | 10/10 | +10 pp |
+| Object | 9/10 | 10/10 | +10 pp |
+| Goal | 9/10 | 9/10 | 0 pp |
+| Long | 6/10 | 7/10 | +10 pp |
+| **All** | 33/40 | 36/40 | +7.5 pp |
 
-Both engines succeeded in 22 episodes and failed in 10. The remaining eight outcomes split evenly, with four successes unique to each engine. The equal 65% aggregate applies to this matched 40-episode pilot.
+Both engines succeeded in 32 episodes and failed in three. Native LeRobot recorded one unique success and dual HTP recorded four.
 
-[Native episode log](../results/libero/native.jsonl), [IQ-9075 episode log](../results/libero/dual-htp.jsonl), [paired counts](../results/libero/paired.json).
+[Native episode log](../results/libero/native.jsonl) · [IQ-9075 episode log](../results/libero/dual-htp.jsonl) · [Paired counts](../results/libero/paired.json).

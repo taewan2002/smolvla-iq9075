@@ -186,7 +186,7 @@ def input_contract(config, wrapper):
 
 
 @torch.inference_mode()
-def export(checkpoint, vlm, output, part_size, provenance):
+def export(checkpoint, vlm, output, part_size, provenance, flow_steps=None):
     from lerobot.policies.smolvla.modeling_smolvla import create_sinusoidal_pos_embedding
 
     torch.set_num_threads(4)
@@ -194,6 +194,8 @@ def export(checkpoint, vlm, output, part_size, provenance):
     native.policy.float()
     core = native.policy.model
     config = native.policy.config
+    if flow_steps is not None:
+        config.num_steps = flow_steps
     wrapper = core.vlm_with_expert
     size = input_contract(config, wrapper)
     model = wrapper.get_vlm_model()
@@ -308,7 +310,10 @@ def main():
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--vlm", type=Path)
     parser.add_argument("--prefill-layers", type=int, default=6)
+    parser.add_argument("--flow-steps", type=int, help="Override Euler steps while retaining the checkpoint weights")
     args = parser.parse_args()
+    if args.flow_steps is not None and args.flow_steps < 1:
+        parser.error("--flow-steps must be positive")
     if args.prefill_layers <= 0 or bool(args.checkpoint) != bool(args.vlm):
         parser.error("Use a positive partition size and supply both local paths or neither")
     if args.checkpoint:
@@ -317,7 +322,7 @@ def main():
     else:
         checkpoint, vlm = snapshots()
         provenance = {"id": MODEL, "revision": REVISION, "vlm": VLM, "vlm_revision": VLM_REVISION}
-    export(checkpoint, vlm, args.output, args.prefill_layers, provenance)
+    export(checkpoint, vlm, args.output, args.prefill_layers, provenance, args.flow_steps)
 
 
 if __name__ == "__main__":

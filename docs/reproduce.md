@@ -31,7 +31,7 @@ python -m smolvla_iq9075.libero --engine native \
   --execute 10 --inits 1 --save-fixtures runs/fixtures --output runs/native.jsonl
 ```
 
-Both commands fetch the same pinned public snapshot. If Hub Xet downloads stall on your network, run the commands with `HF_HUB_DISABLE_XET=1`. For an offline export or a compatible local checkpoint, supply `--checkpoint DIR --vlm DIR` with both snapshots already present. Export uses about 2.1 GiB of bundle storage and writes a SHA-256 manifest. Choose an empty output path for each export.
+Both commands fetch `lerobot/smolvla_libero` at revision `a24f1f3` and the pinned SmolVLM2 config and tokenizer. If Hub Xet downloads stall on your network, run the commands with `HF_HUB_DISABLE_XET=1`. For an offline export or a compatible local checkpoint, supply `--checkpoint DIR --vlm DIR` with both snapshots already present. Each export uses about 1.5 GiB of bundle storage and writes a SHA-256 manifest. Choose an empty output path for each export. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d).
 
 ```bash
 scp -r bundles/libero runs/fixtures user@iq9075:~/
@@ -69,7 +69,7 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
   --output runs/iq9075-native.json --engines native --repeats 1 --warmup 3 --limit 20 --execute 10
 ```
 
-The runner uses four PyTorch threads and verifies the native checkpoint SHA-256 against the ONNX bundle. Use the same fixtures and run the CPU and HTP timing passes separately. Budget about 16 minutes for this full CPU timing pass on IQ-9075, plus model initialization.
+The runner uses four PyTorch threads and verifies the native checkpoint SHA-256 against the ONNX bundle. Use the same fixtures and run the CPU and HTP timing passes separately.
 
 ## Run closed-loop LIBERO with the board
 
@@ -97,4 +97,4 @@ python -m smolvla_iq9075.libero --engine remote --url http://127.0.0.1:18075 \
 python -m smolvla_iq9075.compare runs/native.jsonl runs/dual.jsonl
 ```
 
-Both rollouts predict 50 actions with 10 flow steps and apply the first 10 actions before observing again. The public checkpoint defaults to executing one action per observation. Pass `--execute 1` to both runners to use that cadence. The 40-episode protocol uses one fixed published initial state for each task across LIBERO Spatial, Object, Goal and Long. Increase `--inits` in both commands for additional initial states. The comparison validates seed, initial observation hash, checkpoint hash, task assets and execution length for every episode before computing success rates. The episode log records simulator wall time, including RPC for remote runs. The board latency benchmark measures inference locally.
+Both rollouts predict 50 actions with 10 flow steps and apply the first 10 actions before observing again. The published checkpoint saves `n_action_steps=50`. Pass `--execute 50` to both runners to use that cadence. The 40-episode protocol uses one fixed published initial state for each task across LIBERO Spatial, Object, Goal and Long. Increase `--inits` in both commands for additional initial states. The comparison validates seed, initial observation hash, checkpoint hash, task assets and execution length for every episode before computing success rates. The episode log records simulator wall time, including RPC for remote runs. The board latency benchmark measures inference locally.

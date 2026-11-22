@@ -1,5 +1,5 @@
 {
-  "bundle_manifest_sha256": "e934e7d394637c97e316aa64c1e7d6592c31ed9aac7affa2d1d4987b3ac3e890",
+  "bundle_manifest_sha256": "82896eee72d17e0144f822304155904b7886cc9601e0eab56f3099a25b6fcac1",
   "machine": "aarch64",
   "kernel": "6.8.0-1084-qcom",
   "warmup": 3,
@@ -7,30 +7,30 @@
   "threads": 4,
   "executed_slice": 10,
   "fixtures": {
-    "libero_10-00-00.npz": "22b1f968f3da6d77c8f5285f3a82a2b1b98669c59ae6832e502d0de59df370d4",
-    "libero_goal-00-00.npz": "daaeb0090656f32769f9dc9fcc0f0924b45b1fed83304c9b56d4f9fbad4fd95e",
-    "libero_object-00-00.npz": "f94bab33d06efd2075fb634af962d2114dd52c4c998ca5e048b33bfb5938ac6e",
-    "libero_spatial-00-00.npz": "bdb0fddac566424f0ae90ada9ad331de40c8dc11f25ba3c4acd5a45523ea0736",
-    "libero_10-01-00.npz": "600a0b0bdcdebde284ba2f61655b4948b20b0cc2a7c2883522caa1a95b147067",
-    "libero_goal-01-00.npz": "23ea7858ff8c77c56124c26af1eae40f048f49b7b8a2497cb50e46b4c318d303",
-    "libero_object-01-00.npz": "4e1c812a74f01cf8ee016575d2161be73ecd90db5b49d22c29d08d87f220ba60",
-    "libero_spatial-01-00.npz": "63792b398527a0b4cb0efb2eba338cecb5bf1bf6f528166b6c5d05cc5ea0168e",
-    "libero_10-02-00.npz": "492e8fcc229e15611d419b3ddedf75805323c41a2ce15f1ceed15f4a6d9f4ccd",
-    "libero_goal-02-00.npz": "c58f4ac60d6f044be805b17d78d1b145c21b007841651fa85b5462a2829eaf63",
-    "libero_object-02-00.npz": "7201fb3a8e55628676dfae4b560b5dc7a3ffcfacb53bdb139af6ba211c7d3c5f",
-    "libero_spatial-02-00.npz": "ffa84f09a0182210bdaf13002ee44dbb8e46697969f8f4a27e7a06c7babd41c8",
-    "libero_10-03-00.npz": "198eca7ca9ec9374b787232ed0ec9349d2916d511ef8413b4484373302cff31f",
-    "libero_goal-03-00.npz": "a4460c81d3963bef8d83fc5354e744067682c3eebbc384cafed4163c2c615acf",
-    "libero_object-03-00.npz": "04bb8ca45f865d76b30ba2249847fde32bd31e96e478b3bde13f9e8f368da7b6",
-    "libero_spatial-03-00.npz": "dec38112d36b862d6db0bfb4e76e1f1f4a71f124468b678ec7a6ce7b5d96f7c8",
-    "libero_10-04-00.npz": "02c07af528a10108655e6291b09fe81eadfb508e81b77e85b6cf5347e68bf448",
-    "libero_goal-04-00.npz": "9124f7ab99241c9a4b4f12be2aeedbedddc2e89e13288836f530eba6abce7b1b",
-    "libero_object-04-00.npz": "28755a184528c8fdb0c77e1634435bf33220afc3eb4ed87bd2a52cbb877c1df4",
-    "libero_spatial-04-00.npz": "06503323ccaa4d0347b003f44dde650681e4393c748846e676aa134f010f7741"
+    "libero_10-00-00.npz": "53e33059735c5fa3e54614b33ecba5251a34d3d3e049d15886eaf71aeea0e4d9",
+    "libero_goal-00-00.npz": "2d85a3e021cf35330d854452520f241cdfedcfd3b90cb19816ec8108784b27ae",
+    "libero_object-00-00.npz": "20d0c4f2f102298c6675c9f31bcf4fc7a4c474593eb6aabbe100790d90564389",
+    "libero_spatial-00-00.npz": "10cc9c1dfa88c6f073dd6b13c6c85980146527ea1799c0c77494f56908430f43",
+    "libero_10-01-00.npz": "59ef9c9e34eb29c7022e292703d1cf2a440f743dc2e243e6af86ea8db6d1534a",
+    "libero_goal-01-00.npz": "80543d52ba1ffc99e3e6d83cec40bb36d7d2a668e04b7fa702b08db2905023b2",
+    "libero_object-01-00.npz": "2701a7d98c6d20860b09a2de9b6d503c6bc11b6414b1fd8cb824a073596a8489",
+    "libero_spatial-01-00.npz": "f0e59080b014783f484972fc146808eb95857bd0db2a0aefa6bf315c4daec9c8",
+    "libero_10-02-00.npz": "390c6f4ccb48c773f9ee9423a0f4d8250259e552d6d79c0836ab40e78e66604a",
+    "libero_goal-02-00.npz": "aa61bddb7296ef5d4807dfc54aa5ea4166e32b7ab9cdd855d9521a3a27eaef9d",
+    "libero_object-02-00.npz": "cae1153920d56c3f052837734fb32f918675a21eea6468e4b4ae19a0b0230832",
+    "libero_spatial-02-00.npz": "149b377025d1a6a18896db0e473f5a22570ceeb2cdfa43c596d8a198b2078c4a",
+    "libero_10-03-00.npz": "1735fc8bc5b0ff2dc5add9e8ab504e093b15d6ec8242ac3780b4360a407becd2",
+    "libero_goal-03-00.npz": "3f927a9e1c6e9527d0dedd138fe8832f006f6d2df64704774fb954ccf44bebf9",
+    "libero_object-03-00.npz": "16ede73c96db5086d2117d077c482734c90651a238f2f9b91f7a8471d30dd5a8",
+    "libero_spatial-03-00.npz": "411229aa0d6b118aad4277dd485f67cf5d025c7f53952666ee7a35a7dcaf1a40",
+    "libero_10-04-00.npz": "2eb47fd89a2aab69a8857ed6eab5e680d59d7d3dd232f638c460c26a4d71e035",
+    "libero_goal-04-00.npz": "ea2463c52ac409c3c84eb106949de84717d437b20edf17c611b828fa2fb811fa",
+    "libero_object-04-00.npz": "3beca3419782f4d5debf1dbec0627b19e978141a999a4014e0dd631b226abe25",
+    "libero_spatial-04-00.npz": "c83b9e76d20a51f2374980487c119b1a116cba370a207433c7addaf21a734826"
   },
   "runs": {
     "dual": {
-      "startup_ms": 108918.4052,
+      "startup_ms": 83547.0635,
       "htp_nodes": [
         "/dev/fastrpc-cdsp",
         "/dev/fastrpc-cdsp1"
@@ -39,264 +39,264 @@
       "qnn_provider": "2.6.0",
       "aggregate_ms": {
         "preprocess_ms": {
-          "median": 18.3509,
-          "p95": 18.4721,
-          "max": 18.483
+          "median": 18.2025,
+          "p95": 21.1714,
+          "max": 21.4118
         },
         "vision_ms": {
-          "median": 76.3421,
-          "p95": 76.7377,
-          "max": 76.8399
+          "median": 76.3892,
+          "p95": 77.0015,
+          "max": 77.1964
         },
         "prefill_ms": {
-          "median": 74.0618,
-          "p95": 75.0776,
-          "max": 75.3959
+          "median": 36.0119,
+          "p95": 36.5962,
+          "max": 37.3336
         },
         "cache_ms": {
-          "median": 42.6635,
-          "p95": 46.4786,
-          "max": 46.877
+          "median": 21.7695,
+          "p95": 24.5933,
+          "max": 25.7019
         },
         "action_ms": {
-          "median": 36.7034,
-          "p95": 38.1588,
-          "max": 38.3809
+          "median": 20.0854,
+          "p95": 21.1029,
+          "max": 21.4093
         },
         "total_ms": {
-          "median": 248.171,
-          "p95": 253.4654,
-          "max": 254.5689
+          "median": 172.4341,
+          "p95": 177.9772,
+          "max": 178.2591
         }
       },
       "raw_ms": [
         {
           "fixture": "libero_10-00-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.431034,
-          "vision_ms": 76.732291,
-          "prefill_ms": 74.818206,
-          "cache_ms": 39.24704,
-          "action_ms": 37.964161,
-          "total_ms": 247.216951
+          "preprocess_ms": 18.584087,
+          "vision_ms": 76.132516,
+          "prefill_ms": 36.328997,
+          "cache_ms": 21.79194,
+          "action_ms": 19.899052,
+          "total_ms": 172.761592
         },
         {
           "fixture": "libero_goal-00-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.153999,
-          "vision_ms": 76.705675,
-          "prefill_ms": 74.99722,
-          "cache_ms": 40.284447,
-          "action_ms": 36.049923,
-          "total_ms": 246.213502
+          "preprocess_ms": 17.654127,
+          "vision_ms": 76.481218,
+          "prefill_ms": 35.630915,
+          "cache_ms": 21.368549,
+          "action_ms": 20.094679,
+          "total_ms": 171.265375
         },
         {
           "fixture": "libero_object-00-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.454003,
-          "vision_ms": 75.930771,
-          "prefill_ms": 73.203085,
-          "cache_ms": 42.303792,
-          "action_ms": 36.607324,
-          "total_ms": 246.522777
+          "preprocess_ms": 18.058143,
+          "vision_ms": 75.718345,
+          "prefill_ms": 36.13863,
+          "cache_ms": 21.32532,
+          "action_ms": 20.047439,
+          "total_ms": 171.31199
         },
         {
           "fixture": "libero_spatial-00-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.126603,
-          "vision_ms": 76.839948,
-          "prefill_ms": 74.924458,
-          "cache_ms": 45.533254,
-          "action_ms": 35.923462,
-          "total_ms": 251.372256
+          "preprocess_ms": 18.472835,
+          "vision_ms": 77.196384,
+          "prefill_ms": 36.518999,
+          "cache_ms": 24.344316,
+          "action_ms": 21.40933,
+          "total_ms": 177.962333
         },
         {
           "fixture": "libero_10-01-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.133739,
-          "vision_ms": 75.660768,
-          "prefill_ms": 73.966584,
-          "cache_ms": 42.842183,
-          "action_ms": 36.426958,
-          "total_ms": 247.054137
+          "preprocess_ms": 21.41183,
+          "vision_ms": 75.885638,
+          "prefill_ms": 37.333645,
+          "cache_ms": 21.880065,
+          "action_ms": 21.023389,
+          "total_ms": 177.558734
         },
         {
           "fixture": "libero_goal-01-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.373792,
-          "vision_ms": 76.343692,
-          "prefill_ms": 73.939656,
-          "cache_ms": 42.526034,
-          "action_ms": 38.052443,
-          "total_ms": 249.260202
+          "preprocess_ms": 21.158755,
+          "vision_ms": 76.836171,
+          "prefill_ms": 36.012118,
+          "cache_ms": 23.141279,
+          "action_ms": 21.086722,
+          "total_ms": 178.259056
         },
         {
           "fixture": "libero_object-01-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.309939,
-          "vision_ms": 76.110043,
-          "prefill_ms": 73.62861,
-          "cache_ms": 42.468793,
-          "action_ms": 37.581553,
-          "total_ms": 248.123628
+          "preprocess_ms": 21.032555,
+          "vision_ms": 76.673878,
+          "prefill_ms": 34.826113,
+          "cache_ms": 20.166816,
+          "action_ms": 20.095044,
+          "total_ms": 172.81779
         },
         {
           "fixture": "libero_spatial-01-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.338688,
-          "vision_ms": 76.378276,
-          "prefill_ms": 75.39587,
-          "cache_ms": 42.465356,
-          "action_ms": 36.779305,
-          "total_ms": 249.381922
+          "preprocess_ms": 17.616887,
+          "vision_ms": 76.227726,
+          "prefill_ms": 36.10014,
+          "cache_ms": 20.951408,
+          "action_ms": 19.971709,
+          "total_ms": 170.890214
         },
         {
           "fixture": "libero_10-02-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.357856,
-          "vision_ms": 76.504059,
-          "prefill_ms": 74.050647,
-          "cache_ms": 42.38572,
-          "action_ms": 36.879723,
-          "total_ms": 248.202119
+          "preprocess_ms": 18.438096,
+          "vision_ms": 76.722003,
+          "prefill_ms": 35.423413,
+          "cache_ms": 21.096358,
+          "action_ms": 19.894259,
+          "total_ms": 171.598035
         },
         {
           "fixture": "libero_goal-02-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.461138,
-          "vision_ms": 76.14395,
-          "prefill_ms": 75.060866,
-          "cache_ms": 42.377022,
-          "action_ms": 36.421697,
-          "total_ms": 248.488268
+          "preprocess_ms": 17.669597,
+          "vision_ms": 75.570061,
+          "prefill_ms": 36.215715,
+          "cache_ms": 22.076474,
+          "action_ms": 20.448017,
+          "total_ms": 172.003405
         },
         {
           "fixture": "libero_object-02-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.343897,
-          "vision_ms": 76.588591,
-          "prefill_ms": 74.571173,
-          "cache_ms": 45.732423,
-          "action_ms": 38.147081,
-          "total_ms": 253.407331
+          "preprocess_ms": 18.034393,
+          "vision_ms": 75.909128,
+          "prefill_ms": 36.228683,
+          "cache_ms": 21.747148,
+          "action_ms": 20.076033,
+          "total_ms": 172.021687
         },
         {
           "fixture": "libero_spatial-02-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.416189,
-          "vision_ms": 76.23916,
-          "prefill_ms": 74.653882,
-          "cache_ms": 43.761568,
-          "action_ms": 36.995193,
-          "total_ms": 250.089326
+          "preprocess_ms": 18.709661,
+          "vision_ms": 76.234966,
+          "prefill_ms": 35.161274,
+          "cache_ms": 21.596521,
+          "action_ms": 20.381661,
+          "total_ms": 172.106583
         },
         {
           "fixture": "libero_10-03-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.471555,
-          "vision_ms": 76.670414,
-          "prefill_ms": 73.040167,
-          "cache_ms": 46.457587,
-          "action_ms": 36.432999,
-          "total_ms": 251.095327
+          "preprocess_ms": 17.83413,
+          "vision_ms": 76.991224,
+          "prefill_ms": 36.252225,
+          "cache_ms": 23.0718,
+          "action_ms": 20.028376,
+          "total_ms": 174.200568
         },
         {
           "fixture": "libero_goal-03-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.098738,
-          "vision_ms": 76.311297,
-          "prefill_ms": 74.878208,
-          "cache_ms": 46.876967,
-          "action_ms": 38.380885,
-          "total_ms": 254.568906
+          "preprocess_ms": 18.165645,
+          "vision_ms": 76.575178,
+          "prefill_ms": 35.468934,
+          "cache_ms": 23.142686,
+          "action_ms": 20.189836,
+          "total_ms": 173.565873
         },
         {
           "fixture": "libero_object-03-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.298324,
-          "vision_ms": 76.385672,
-          "prefill_ms": 74.596434,
-          "cache_ms": 42.755204,
-          "action_ms": 36.079922,
-          "total_ms": 248.139878
+          "preprocess_ms": 17.68543,
+          "vision_ms": 76.191319,
+          "prefill_ms": 35.773886,
+          "cache_ms": 24.534995,
+          "action_ms": 19.978271,
+          "total_ms": 174.185776
         },
         {
           "fixture": "libero_spatial-03-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.30197,
-          "vision_ms": 76.340464,
-          "prefill_ms": 73.769081,
-          "cache_ms": 42.571764,
-          "action_ms": 36.62748,
-          "total_ms": 247.634717
+          "preprocess_ms": 18.239395,
+          "vision_ms": 76.568564,
+          "prefill_ms": 35.87321,
+          "cache_ms": 20.248848,
+          "action_ms": 19.80556,
+          "total_ms": 170.760004
         },
         {
           "fixture": "libero_10-04-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.483013,
-          "vision_ms": 75.112273,
-          "prefill_ms": 70.326231,
-          "cache_ms": 44.508555,
-          "action_ms": 37.459208,
-          "total_ms": 245.912979
+          "preprocess_ms": 17.774753,
+          "vision_ms": 76.663877,
+          "prefill_ms": 35.486591,
+          "cache_ms": 20.516455,
+          "action_ms": 20.312651,
+          "total_ms": 170.777504
         },
         {
           "fixture": "libero_goal-04-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.301448,
-          "vision_ms": 76.253431,
-          "prefill_ms": 73.787883,
-          "cache_ms": 42.818121,
-          "action_ms": 36.491281,
-          "total_ms": 247.676957
+          "preprocess_ms": 17.530793,
+          "vision_ms": 76.297206,
+          "prefill_ms": 36.557385,
+          "cache_ms": 25.701885,
+          "action_ms": 20.05421,
+          "total_ms": 176.164967
         },
         {
           "fixture": "libero_object-04-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.382127,
-          "vision_ms": 76.037126,
-          "prefill_ms": 73.453089,
-          "cache_ms": 42.555201,
-          "action_ms": 37.371083,
-          "total_ms": 247.82425
+          "preprocess_ms": 18.873518,
+          "vision_ms": 76.915339,
+          "prefill_ms": 35.487007,
+          "cache_ms": 23.134612,
+          "action_ms": 20.310359,
+          "total_ms": 174.743387
         },
         {
           "fixture": "libero_spatial-04-00.npz",
           "repeat": 0,
-          "preprocess_ms": 18.407023,
-          "vision_ms": 76.459162,
-          "prefill_ms": 74.072938,
-          "cache_ms": 46.258054,
-          "action_ms": 36.114559,
-          "total_ms": 251.336841
+          "preprocess_ms": 18.667942,
+          "vision_ms": 75.81194,
+          "prefill_ms": 36.011753,
+          "cache_ms": 19.950198,
+          "action_ms": 20.027959,
+          "total_ms": 170.492709
         }
       ],
       "vs_native": {
-        "max_absolute": 1.9873968958854675,
-        "mean_absolute": 0.020753881059886355,
-        "relative_l2": 0.13424813376386116,
+        "max_absolute": 2.0729029178619385,
+        "mean_absolute": 0.011351026408781764,
+        "relative_l2": 0.08982310673022902,
         "mean_absolute_by_action_dim": [
-          0.027400034200400113,
-          0.01921240897849202,
-          0.03062553706392646,
-          0.003230753121199086,
-          0.004995554263005033,
-          0.0038768481246661394,
-          0.05593603166751564
+          0.014738473743200302,
+          0.017450844265520574,
+          0.016322291277348994,
+          0.0024738580634002575,
+          0.003623951043235138,
+          0.002817227850202471,
+          0.022030538618564605
         ]
       },
       "executed_slice_vs_native": {
-        "max_absolute": 0.13244128227233887,
-        "mean_absolute": 0.017407070839399238,
-        "relative_l2": 0.06139098993974447,
+        "max_absolute": 0.09249752759933472,
+        "mean_absolute": 0.012527502408130593,
+        "relative_l2": 0.04365695507252464,
         "mean_absolute_by_action_dim": [
-          0.03094416769221425,
-          0.0215339470282197,
-          0.019222129117697478,
-          0.004168123460985953,
-          0.00324046608642675,
-          0.003209237252594903,
-          0.03953142523765564
+          0.019621563050895928,
+          0.02434138987213373,
+          0.015779264159500598,
+          0.0031864145606232343,
+          0.004206648612162098,
+          0.00285485350061208,
+          0.01770238310098648
         ]
       }
     }

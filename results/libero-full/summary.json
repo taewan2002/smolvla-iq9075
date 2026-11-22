@@ -1,87 +1,112 @@
 {
   "libero_spatial": {
+    "default": {
+      "successes": 351,
+      "episodes": 500,
+      "rate_percent": 70.2
+    },
     "teacher": {
+      "successes": 439,
+      "episodes": 500,
+      "rate_percent": 87.8
+    },
+    "undistilled": {
+      "successes": 428,
+      "episodes": 500,
+      "rate_percent": 85.6
+    },
+    "distilled": {
+      "successes": 410,
+      "episodes": 500,
+      "rate_percent": 82.0
+    }
+  },
+  "libero_object": {
+    "default": {
       "successes": 334,
       "episodes": 500,
       "rate_percent": 66.8
     },
-    "undistilled": {
-      "successes": 402,
-      "episodes": 500,
-      "rate_percent": 80.4
-    },
-    "distilled": {
-      "successes": 295,
-      "episodes": 500,
-      "rate_percent": 59.0
-    }
-  },
-  "libero_object": {
     "teacher": {
-      "successes": 449,
+      "successes": 453,
       "episodes": 500,
-      "rate_percent": 89.8
+      "rate_percent": 90.6
     },
     "undistilled": {
-      "successes": 486,
+      "successes": 456,
       "episodes": 500,
-      "rate_percent": 97.2
+      "rate_percent": 91.2
     },
     "distilled": {
-      "successes": 451,
+      "successes": 456,
       "episodes": 500,
-      "rate_percent": 90.2
+      "rate_percent": 91.2
     }
   },
   "libero_goal": {
-    "teacher": {
-      "successes": 383,
+    "default": {
+      "successes": 392,
       "episodes": 500,
-      "rate_percent": 76.6
+      "rate_percent": 78.4
+    },
+    "teacher": {
+      "successes": 441,
+      "episodes": 500,
+      "rate_percent": 88.2
     },
     "undistilled": {
-      "successes": 433,
+      "successes": 446,
       "episodes": 500,
-      "rate_percent": 86.6
+      "rate_percent": 89.2
     },
     "distilled": {
-      "successes": 373,
+      "successes": 430,
       "episodes": 500,
-      "rate_percent": 74.6
+      "rate_percent": 86.0
     }
   },
   "libero_10": {
-    "teacher": {
-      "successes": 185,
+    "default": {
+      "successes": 235,
       "episodes": 500,
-      "rate_percent": 37.0
+      "rate_percent": 47.0
+    },
+    "teacher": {
+      "successes": 328,
+      "episodes": 500,
+      "rate_percent": 65.6
     },
     "undistilled": {
-      "successes": 247,
+      "successes": 337,
       "episodes": 500,
-      "rate_percent": 49.4
+      "rate_percent": 67.4
     },
     "distilled": {
-      "successes": 206,
+      "successes": 318,
       "episodes": 500,
-      "rate_percent": 41.2
+      "rate_percent": 63.6
     }
   },
   "all": {
-    "teacher": {
-      "successes": 1351,
+    "default": {
+      "successes": 1312,
       "episodes": 2000,
-      "rate_percent": 67.55
+      "rate_percent": 65.6
+    },
+    "teacher": {
+      "successes": 1661,
+      "episodes": 2000,
+      "rate_percent": 83.05
     },
     "undistilled": {
-      "successes": 1568,
+      "successes": 1667,
       "episodes": 2000,
-      "rate_percent": 78.4
+      "rate_percent": 83.35
     },
     "distilled": {
-      "successes": 1325,
+      "successes": 1614,
       "episodes": 2000,
-      "rate_percent": 66.25
+      "rate_percent": 80.7
     }
   }
 }
