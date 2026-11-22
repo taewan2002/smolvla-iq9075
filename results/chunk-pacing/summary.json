@@ -1,0 +1,304 @@
+{
+  "settings": {
+    "checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
+    "execute": 10,
+    "control_hz": 25,
+    "predicted_actions": 50,
+    "denoising_steps": 10,
+    "backend": "dual"
+  },
+  "profiles": {
+    "sync": {
+      "refill_actions": 0,
+      "overlap": 0
+    },
+    "async": {
+      "refill_actions": 8,
+      "overlap": 0
+    },
+    "async_blend": {
+      "refill_actions": 8,
+      "overlap": 3
+    }
+  },
+  "paired_success": {
+    "async_vs_sync": {
+      "libero_spatial": {
+        "episodes": 10,
+        "baseline_successes": 8,
+        "candidate_successes": 7,
+        "delta_percentage_points": -10.0,
+        "both_success": 6,
+        "baseline_only": 2,
+        "candidate_only": 1,
+        "both_failed": 1
+      },
+      "libero_object": {
+        "episodes": 10,
+        "baseline_successes": 9,
+        "candidate_successes": 5,
+        "delta_percentage_points": -40.0,
+        "both_success": 5,
+        "baseline_only": 4,
+        "candidate_only": 0,
+        "both_failed": 1
+      },
+      "libero_goal": {
+        "episodes": 10,
+        "baseline_successes": 8,
+        "candidate_successes": 6,
+        "delta_percentage_points": -20.0,
+        "both_success": 6,
+        "baseline_only": 2,
+        "candidate_only": 0,
+        "both_failed": 2
+      },
+      "libero_10": {
+        "episodes": 10,
+        "baseline_successes": 6,
+        "candidate_successes": 5,
+        "delta_percentage_points": -10.0,
+        "both_success": 3,
+        "baseline_only": 3,
+        "candidate_only": 2,
+        "both_failed": 2
+      },
+      "all": {
+        "episodes": 40,
+        "baseline_successes": 31,
+        "candidate_successes": 23,
+        "delta_percentage_points": -20.0,
+        "both_success": 20,
+        "baseline_only": 11,
+        "candidate_only": 3,
+        "both_failed": 6
+      }
+    },
+    "blend_vs_sync": {
+      "libero_spatial": {
+        "episodes": 10,
+        "baseline_successes": 8,
+        "candidate_successes": 7,
+        "delta_percentage_points": -10.0,
+        "both_success": 6,
+        "baseline_only": 2,
+        "candidate_only": 1,
+        "both_failed": 1
+      },
+      "libero_object": {
+        "episodes": 10,
+        "baseline_successes": 9,
+        "candidate_successes": 7,
+        "delta_percentage_points": -20.0,
+        "both_success": 7,
+        "baseline_only": 2,
+        "candidate_only": 0,
+        "both_failed": 1
+      },
+      "libero_goal": {
+        "episodes": 10,
+        "baseline_successes": 8,
+        "candidate_successes": 7,
+        "delta_percentage_points": -10.0,
+        "both_success": 6,
+        "baseline_only": 2,
+        "candidate_only": 1,
+        "both_failed": 1
+      },
+      "libero_10": {
+        "episodes": 10,
+        "baseline_successes": 6,
+        "candidate_successes": 5,
+        "delta_percentage_points": -10.0,
+        "both_success": 3,
+        "baseline_only": 3,
+        "candidate_only": 2,
+        "both_failed": 2
+      },
+      "all": {
+        "episodes": 40,
+        "baseline_successes": 31,
+        "candidate_successes": 26,
+        "delta_percentage_points": -12.5,
+        "both_success": 22,
+        "baseline_only": 9,
+        "candidate_only": 4,
+        "both_failed": 5
+      }
+    },
+    "blend_vs_async": {
+      "libero_spatial": {
+        "episodes": 10,
+        "baseline_successes": 7,
+        "candidate_successes": 7,
+        "delta_percentage_points": 0.0,
+        "both_success": 6,
+        "baseline_only": 1,
+        "candidate_only": 1,
+        "both_failed": 2
+      },
+      "libero_object": {
+        "episodes": 10,
+        "baseline_successes": 5,
+        "candidate_successes": 7,
+        "delta_percentage_points": 20.0,
+        "both_success": 5,
+        "baseline_only": 0,
+        "candidate_only": 2,
+        "both_failed": 3
+      },
+      "libero_goal": {
+        "episodes": 10,
+        "baseline_successes": 6,
+        "candidate_successes": 7,
+        "delta_percentage_points": 10.0,
+        "both_success": 5,
+        "baseline_only": 1,
+        "candidate_only": 2,
+        "both_failed": 2
+      },
+      "libero_10": {
+        "episodes": 10,
+        "baseline_successes": 5,
+        "candidate_successes": 5,
+        "delta_percentage_points": 0.0,
+        "both_success": 5,
+        "baseline_only": 0,
+        "candidate_only": 0,
+        "both_failed": 5
+      },
+      "all": {
+        "episodes": 40,
+        "baseline_successes": 23,
+        "candidate_successes": 26,
+        "delta_percentage_points": 7.5,
+        "both_success": 21,
+        "baseline_only": 2,
+        "candidate_only": 5,
+        "both_failed": 12
+      }
+    }
+  },
+  "metrics": {
+    "sync": {
+      "episodes": 40,
+      "successes": 31,
+      "applied_actions": 8814,
+      "empty_ticks": 7130,
+      "scheduler_missed_ticks": 0,
+      "empty_tick_percent": 44.719,
+      "late_boundaries": 849,
+      "mean_chunk_wait_ms": 334.6996,
+      "control_seconds_per_episode": {
+        "samples": 40,
+        "median": 12.0452,
+        "p95": 37.4565
+      },
+      "startup_ms": {
+        "samples": 40,
+        "median": 351.2747,
+        "p95": 440.0266
+      },
+      "chunk_wait_ms": {
+        "samples": 849,
+        "median": 320.0,
+        "p95": 400.0
+      },
+      "inference_ms": {
+        "samples": 889,
+        "median": 339.025,
+        "p95": 403.3755
+      },
+      "position_jumps": {
+        "samples": 849,
+        "median": 0.0981,
+        "p95": 0.5079
+      },
+      "rotation_jumps": {
+        "samples": 849,
+        "median": 0.0166,
+        "p95": 0.0702
+      }
+    },
+    "async": {
+      "episodes": 40,
+      "successes": 23,
+      "applied_actions": 9672,
+      "empty_ticks": 479,
+      "scheduler_missed_ticks": 0,
+      "empty_tick_percent": 4.7187,
+      "late_boundaries": 219,
+      "mean_chunk_wait_ms": 20.383,
+      "control_seconds_per_episode": {
+        "samples": 40,
+        "median": 10.4068,
+        "p95": 21.9669
+      },
+      "startup_ms": {
+        "samples": 40,
+        "median": 352.3592,
+        "p95": 513.1057
+      },
+      "chunk_wait_ms": {
+        "samples": 940,
+        "median": 0.0,
+        "p95": 120.0
+      },
+      "inference_ms": {
+        "samples": 980,
+        "median": 337.2342,
+        "p95": 450.0226
+      },
+      "position_jumps": {
+        "samples": 940,
+        "median": 0.0901,
+        "p95": 0.8504
+      },
+      "rotation_jumps": {
+        "samples": 940,
+        "median": 0.0144,
+        "p95": 0.065
+      }
+    },
+    "async_blend": {
+      "episodes": 40,
+      "successes": 26,
+      "applied_actions": 9340,
+      "empty_ticks": 836,
+      "scheduler_missed_ticks": 0,
+      "empty_tick_percent": 8.2154,
+      "late_boundaries": 286,
+      "mean_chunk_wait_ms": 36.8212,
+      "control_seconds_per_episode": {
+        "samples": 40,
+        "median": 8.1456,
+        "p95": 22.4422
+      },
+      "startup_ms": {
+        "samples": 40,
+        "median": 355.505,
+        "p95": 498.9713
+      },
+      "chunk_wait_ms": {
+        "samples": 906,
+        "median": 0.0,
+        "p95": 120.0
+      },
+      "inference_ms": {
+        "samples": 946,
+        "median": 342.8614,
+        "p95": 471.3276
+      },
+      "position_jumps": {
+        "samples": 906,
+        "median": 0.0445,
+        "p95": 0.2351
+      },
+      "rotation_jumps": {
+        "samples": 906,
+        "median": 0.0066,
+        "p95": 0.0213
+      }
+    }
+  }
+}

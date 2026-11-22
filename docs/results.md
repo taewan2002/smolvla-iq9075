@@ -6,7 +6,7 @@ The reference latency and closed-loop board tests use `lerobot/smolvla_libero` a
 
 Measurements used a Qualcomm IQ-9075 EVK with eight Cortex-A78C CPU cores and two HTPs. All engines received the same first observation from task IDs 0–4 in each LIBERO suite, for 20 observations total. The board ran three warm-ups per engine. ORT and PyTorch used four inference threads, with one OpenBLAS thread for the host projections. Timing starts with both RGB arrays in memory and ends with 50 denormalized actions. Camera capture, transport and motor control are outside this measurement. [ONNX and QNN timings](../results/iq9075.json) · [Native PyTorch timings](../results/iq9075-native.json).
 
-The benchmark executes one prediction at a time. LeRobot async inference overlaps prediction with the execution of queued actions. At 25 Hz, ten queued actions cover 400 ms at most, and the refill deadline depends on how many actions remain when the request starts. A rollout measurement would also include capture, transport and queue underruns. [LeRobot asynchronous inference](https://huggingface.co/blog/async-robot-inference).
+The latency benchmark executes one prediction at a time. The [timed rollout comparison](chunk-pacing.md) measures camera sampling, transport and action queue timing while LIBERO applies commands at 25 Hz.
 
 | IQ-9075 engine | Median | p95 | Maximum | Cold initialization |
 | --- | ---: | ---: | ---: | ---: |
@@ -15,17 +15,16 @@ The benchmark executes one prediction at a time. LeRobot async inference overlap
 | QNN Adreno 663 GPU FP32 recheck | 27,891.6 ms | 27,919.3 ms | 27,921.3 ms | 16.1 s |
 | QNN Adreno 663 GPU FP16 | 21,540.7 ms | 21,577.8 ms | 21,593.1 ms | 14.5 s |
 | QNN Adreno 663 GPU FP16 with 1×1 vision Conv | 10,200.3 ms | 10,221.7 ms | 10,231.5 ms | 15.0 s |
-| QNN single HTP FP16 | 323.2 ms | 329.6 ms | 329.7 ms | 64.2 s |
-| QNN dual HTP FP16 | 249.7 ms | 254.4 ms | 255.1 ms | 78.6 s |
+| QNN single HTP FP16, optimized export | 323.2 ms | 329.6 ms | 329.7 ms | 64.2 s |
+| QNN dual HTP FP16, optimized export | 249.7 ms | 254.4 ms | 255.1 ms | 78.6 s |
 
 | Transition | Median latency before → after | Speedup | What changes |
 | --- | ---: | ---: | --- |
 | PyTorch CPU → ORT CPU | 28,749.1 → 5,812.8 ms | 4.9× | Static ONNX graphs and ORT execution on CPU |
 | ORT CPU → single HTP | 5,812.8 → 323.2 ms | 18.0× | The same graphs move from FP32 on the CPU to QNN FP16 on one HTP |
 | Single HTP → dual HTP | 323.2 → 249.7 ms | 1.3× | The camera views run concurrently and the prefill groups alternate between HTPs |
-| Dual HTP, 10-step → undistilled 2-step | 249.7 → 173.1 ms | 1.4× | The Euler schedule runs two updates with the original weights |
 
-Across the 10-step configurations, dual HTP was **115.1×** faster than eager LeRobot on the board CPU and **23.3×** faster than ORT CPU. Both HTP device nodes opened during the dual run. [Two-step timings](distillation.md#iq-9075-latency-and-action-agreement).
+Both HTP device nodes opened during the dual run.
 
 | Median per stage | ORT CPU | Adreno GPU FP32 recheck | Adreno GPU FP16 | Single HTP | Dual HTP |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -36,6 +35,12 @@ Across the 10-step configurations, dual HTP was **115.1×** faster than eager Le
 | Action Expert and output scaling | 1,154.1 ms | 4,661.3 ms | 3,689.6 ms | 98.3 ms | 98.0 ms |
 
 From single to dual HTP, vision latency fell **48.6%** and prefill stayed near 36 ms. The ORT CPU and HTP runs use the same 6+6+4 prefill partition and reuse cross-attention K/V projections and masks between denoising steps. Each stage has its own median. Cold initialization includes session creation and HTP graph finalization outside the warm inference timers.
+
+### Unoptimized single-HTP FP16 reference
+
+The reference probe exports the original LeRobot `sample_actions` path as one static ONNX graph with two camera inputs and ten Euler steps. It uses the stock ONNX Runtime QNN provider with `device_id=0`, `enable_htp_fp16_precision=1` and CPU fallback disabled. Explicit integer casts preserve PyTorch's mask promotion at the 22 `CumSum` inputs in the ONNX export.
+
+On IQ-9075, QNN reported 40 unsupported nodes during initial placement, including 20 `Slice` nodes, and rejected `StridedSlice` validation with error 3110. The probe stopped during session construction after the placement errors. Latency is unavailable for this reference. The 323.2 ms single-HTP measurement above uses the optimized export. [Admission report](../results/iq9075-stock-htp.json).
 
 ### Adreno GPU comparison
 

@@ -1,0 +1,30 @@
+{
+  "checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
+  "onnx_sha256": "13cef13d52dd81ec2b5fa4aebc24fc4b651ff84b13ef94bab6c94139c6a08010",
+  "source_onnx_sha256": "224f3a282ba0fcfef943f71db3f4be9c64c9ef388ffa6a42d40aa91c8c503de8",
+  "mask_dtype_casts": 22,
+  "denoising_steps": 10,
+  "predicted_actions": 50,
+  "backend": "QNN single HTP FP16",
+  "onnxruntime": "1.30.0",
+  "onnxruntime_qnn": "2.6.0",
+  "device_id": 0,
+  "cpu_fallback": false,
+  "status": "unsupported_operator_placement",
+  "disposition": "Stopped session construction after QNN rejected operator placement.",
+  "probe_ended_at": "2026-11-22T17:41:15Z",
+  "unsupported_nodes_by_operator": {
+    "Cast": 2,
+    "Concat": 2,
+    "Expand": 4,
+    "NonZero": 2,
+    "Reshape": 2,
+    "ScatterND": 2,
+    "Shape": 2,
+    "Slice": 20,
+    "Unsqueeze": 4
+  },
+  "strided_slice_validation_error": 3110,
+  "measured_observations": 0,
+  "latency_ms": null
+}

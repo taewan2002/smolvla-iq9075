@@ -55,9 +55,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
     parser.add_argument("candidate", type=Path)
-    parser.add_argument("--distillation", type=Path, help="Teacher/student lineage from distill.py")
+    lineage_files = parser.add_mutually_exclusive_group()
+    lineage_files.add_argument("--distillation", type=Path, help="Lineage for archived two-step results")
+    lineage_files.add_argument("--snapflow", type=Path, help="Lineage from the SnapFlow training report")
     args = parser.parse_args()
     lineage = json.loads(args.distillation.read_text()) if args.distillation else None
+    if args.snapflow:
+        report = json.loads(args.snapflow.read_text())
+        lineage = {"teacher_checkpoint_sha256": report["starting_checkpoint_sha256"],
+                   "student_checkpoint_sha256": report["checkpoint_sha256"],
+                   "teacher_steps": 10, "student_steps": report["denoising_steps"]}
     print(json.dumps(compare(read(args.baseline), read(args.candidate), lineage), indent=2))
 
 

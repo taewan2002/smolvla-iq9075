@@ -1,0 +1,33 @@
+{
+  "starting_checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
+  "checkpoint_sha256": "1569acff552a1857ab28b1bde1ab70150f74ec33064219c9828d9debc2304f28",
+  "updates": 3000,
+  "batch": 4,
+  "learning_rate": 2.5e-05,
+  "warmup": 500,
+  "alpha": 0.5,
+  "shortcut_weight": 0.1,
+  "seed": 47000,
+  "training_precision": "bf16 autocast",
+  "denoising_steps": 1,
+  "predicted_actions": 50,
+  "execution_actions": 10,
+  "demo_files": 40,
+  "train_demos": 1600,
+  "heldout_demos": 400,
+  "validation_samples": 128,
+  "original_10nfe": {
+    "first10_mse": 0.24775845182817535,
+    "full_chunk_mse": 0.29935883909481287
+  },
+  "naive_1nfe": {
+    "first10_mse": 0.24862863769254154,
+    "full_chunk_mse": 0.2986372800473924
+  },
+  "snapflow_1nfe": {
+    "first10_mse": 0.2607112569708897,
+    "full_chunk_mse": 0.32088674263474265
+  },
+  "fold_max_abs_error": 1.6689300537109375e-06,
+  "seconds": 286.2
+}

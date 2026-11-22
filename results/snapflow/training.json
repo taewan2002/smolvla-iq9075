@@ -1,0 +1,36 @@
+{
+  "starting_checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
+  "checkpoint_sha256": "d3303a4d63a5b62fc7c6b99cdd44d37e444bb1321e21443be8725c0b25780eeb",
+  "updates": 400,
+  "batch": 4,
+  "learning_rate": 3e-06,
+  "warmup": 100,
+  "alpha": 0.5,
+  "shortcut_weight": 0.1,
+  "seed": 47000,
+  "training_precision": "bf16 autocast",
+  "denoising_steps": 1,
+  "predicted_actions": 50,
+  "execution_actions": 10,
+  "dataset": "lerobot/libero",
+  "dataset_revision": "a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4",
+  "data_workers": 24,
+  "tasks": 40,
+  "train_demos": 1340,
+  "heldout_demos": 353,
+  "validation_samples": 128,
+  "original_10nfe": {
+    "first10_mse": 0.016015240398136156,
+    "full_chunk_mse": 0.023072181900670705
+  },
+  "naive_1nfe": {
+    "first10_mse": 0.01765953323843024,
+    "full_chunk_mse": 0.025513198198834915
+  },
+  "snapflow_1nfe": {
+    "first10_mse": 0.020172026683501057,
+    "full_chunk_mse": 0.02792896435327391
+  },
+  "fold_max_abs_error": 2.5033950805664062e-06,
+  "seconds": 136.8
+}

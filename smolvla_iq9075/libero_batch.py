@@ -1,7 +1,6 @@
 """Batched native LIBERO evaluation with separate MuJoCo workers."""
 import argparse
 from collections import deque
-from functools import wraps
 import hashlib
 import json
 import multiprocessing as mp
@@ -16,31 +15,8 @@ import traceback
 import numpy as np
 
 from .compare import read
-from .libero import SUITES, configure, observation
+from .libero import SUITES, CameraSampler, configure, observation
 from .native import NativePolicy, sha256, snapshots
-
-CAMERAS = ("agentview_image", "robot0_eye_in_hand_image")
-
-
-class CameraSampler:
-    """Reuse unused frames while retaining the simulator's observation clocks."""
-
-    def __init__(self, env):
-        self.capture = True
-        self.frames = {}
-        for name in CAMERAS:
-            observable = env.env._observables[name]
-            observable._sensor = self.wrap(name, observable._sensor)
-
-    def wrap(self, name, original):
-        @wraps(original)
-        def sensor(cache):
-            if self.capture or name not in self.frames:
-                self.frames[name] = original(cache)
-            return self.frames[name]
-
-        return sensor
-
 
 def sim_worker(pipe, libero_root, fresh_env=False):
     import torch
