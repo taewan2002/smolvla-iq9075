@@ -1,6 +1,6 @@
 # IQ-9075 benchmark results
 
-The latency and closed-loop board tests use `lerobot/smolvla_libero` at revision `a24f1f3`, with 50 predicted actions and ten denoising steps. The export and native reference use the same checkpoint weights. The manifest records file checksums and library versions. This export loaded a local copy of the pinned snapshot, and its checkpoint SHA-256 agrees with the evaluation protocol. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d) · [Export manifest](../results/export-manifest.json) · [Evaluation protocol](../results/libero-full/protocol.json).
+The reference latency and closed-loop board tests use `lerobot/smolvla_libero` at revision `a24f1f3`, with 50 predicted actions and ten denoising steps. The export and native reference use the same checkpoint weights. The manifest records file checksums and library versions. This export loaded a local copy of the pinned snapshot, and its checkpoint SHA-256 agrees with the evaluation protocol. [Checkpoint](https://huggingface.co/lerobot/smolvla_libero/tree/a24f1f380461b665158d52acd140152c79e8b36d) · [Export manifest](../results/export-manifest.json) · [Evaluation protocol](../results/libero-full/protocol.json).
 
 ## On-device latency
 
@@ -13,7 +13,14 @@ Measurements used a Qualcomm IQ-9075 EVK with eight Cortex-A78C CPU cores and tw
 | QNN single HTP FP16 | 323.2 ms | 329.6 ms | 329.7 ms | 64.2 s |
 | QNN dual HTP FP16 | 249.7 ms | 254.4 ms | 255.1 ms | 78.6 s |
 
-Dual HTP ran **115.1×** faster than eager LeRobot on the IQ-9075 CPU and **23.3×** faster than ORT CPU on the same exported graphs. Median latency fell **22.7%** compared with single HTP. Both HTP device nodes opened during the dual run.
+| Transition | Median latency before → after | Speedup | What changes |
+| --- | ---: | ---: | --- |
+| PyTorch CPU → ORT CPU | 28,749.1 → 5,812.8 ms | 4.9× | Static ONNX graphs and ORT execution on CPU |
+| ORT CPU → single HTP | 5,812.8 → 323.2 ms | 18.0× | The same graphs move from FP32 on the CPU to QNN FP16 on one HTP |
+| Single HTP → dual HTP | 323.2 → 249.7 ms | 1.3× | The camera views run concurrently and the prefill groups alternate between HTPs |
+| Dual HTP, 10-step → undistilled 2-step | 249.7 → 173.1 ms | 1.4× | The Euler schedule runs two updates with the original weights |
+
+Across the 10-step configurations, dual HTP was **115.1×** faster than eager LeRobot on the board CPU and **23.3×** faster than ORT CPU. Both HTP device nodes opened during the dual run. [Two-step timings](distillation.md#iq-9075-latency-and-action-agreement).
 
 | Median per stage | ORT CPU | Single HTP | Dual HTP |
 | --- | ---: | ---: | ---: |
@@ -23,7 +30,7 @@ Dual HTP ran **115.1×** faster than eager LeRobot on the IQ-9075 CPU and **23.3
 | Host K/V projections and masks | 21.2 ms | 22.3 ms | 21.3 ms |
 | Action Expert and output scaling | 1,154.1 ms | 98.3 ms | 98.0 ms |
 
-Each stage has its own median. Cold initialization includes session creation and HTP graph finalization outside the warm inference timers.
+From single to dual HTP, vision latency fell **48.6%** and prefill stayed near 36 ms. The ORT CPU and HTP runs use the same 6+6+4 prefill partition and reuse cross-attention K/V projections and masks between denoising steps. Each stage has its own median. Cold initialization includes session creation and HTP graph finalization outside the warm inference timers.
 
 ## Action agreement on fixed observations
 

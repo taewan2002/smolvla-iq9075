@@ -4,6 +4,27 @@ An ONNX exporter, dual-HTP runtime and paired LIBERO benchmark for `lerobot/smol
 
 [Reproduce the evaluation](docs/reproduce.md) covers installation, model export, board latency measurement and closed-loop evaluation. The board accepts two RGB arrays, task text, low-dimensional state and reproducible initial noise. It returns a full action chunk that LIBERO can execute in simulation.
 
+## IQ-9075 speedup
+
+The original 10-step checkpoint went from **28,749.1 ms on PyTorch CPU to 249.7 ms on dual HTP**, a **115.1× speedup**. Against ONNX Runtime CPU on the same exported graphs, dual HTP was **23.3× faster**. All rows use the same 20 LIBERO observations, measured from two RGB images in memory through 50 denormalized actions after three warm-up calls.
+
+| Runtime on IQ-9075 | Denoising steps | Median | p95 | Speedup vs. PyTorch CPU |
+| --- | ---: | ---: | ---: | ---: |
+| Native LeRobot, PyTorch CPU | 10 | 28,749.1 ms | 29,915.4 ms | 1.0× |
+| ONNX Runtime CPU, FP32 | 10 | 5,812.8 ms | 6,001.3 ms | 4.9× |
+| QNN single HTP, FP16 | 10 | 323.2 ms | 329.6 ms | 89.0× |
+| QNN dual HTP, FP16 | 10 | 249.7 ms | 254.4 ms | 115.1× |
+| QNN dual HTP, FP16, undistilled | 2 | **173.1 ms** | **176.9 ms** | **166.1×** |
+
+The 10-step rows use the same checkpoint weights and denoising schedule. The last row keeps the weights and cuts the Euler schedule from ten updates to two. [Benchmark protocol and raw timings](docs/results.md).
+
+## What changed
+
+- **Static ONNX export and QNN FP16.** Export fixed-shape graphs for a single camera view, the language prefill partitions and one Action Expert update. Resize, tokenize, normalize and scale actions on the host. Run the graphs on HTP via the QNN execution provider and rescale RMSNorm activations to stay within FP16 range.
+- **Dual-HTP scheduling.** Encode the two camera views concurrently, one per HTP. Vision latency fell from **148.4 to 76.2 ms (−48.6%)** compared with single HTP. Full inference fell from **323.2 to 249.7 ms (−22.7%)**.
+- **Partitioned language prefill.** Split the 16 language layers into groups of 6, 6 and 4, run successive groups on alternating HTPs, and export the per-layer attention K/V cache. Prefill on dual HTP took **35.8 ms**, compared with **561.2 ms** for the same partitions on ORT CPU.
+- **Reused Action Expert inputs.** Precompute flow timestep embeddings at export. Build the cross-attention K/V projections, position encodings and masks once per observation and reuse them in each Euler update. With the two-step schedule, median Action Expert latency including output scaling fell from **98.0 to 20.3 ms**, and full inference fell **30.7%** to **173.1 ms**. [Two-step benchmark](docs/distillation.md).
+
 ## Full LIBERO success rate
 
 Each column evaluates **2,000 episodes** across four LIBERO suites, using 50 published initial states per task and native LeRobot inference. All modes predict 50 actions. The published checkpoint's saved default executes all 50 before re-observing. The three deployment variants execute ten actions per query.
@@ -16,27 +37,7 @@ Each column evaluates **2,000 episodes** across four LIBERO suites, using 50 pub
 | Long | 47.00% (235/500) | 65.60% (328/500) | 67.40% (337/500) | 63.60% (318/500) |
 | **All** | 65.60% (1,312/2,000) | 83.05% (1,661/2,000) | 83.35% (1,667/2,000) | 80.70% (1,614/2,000) |
 
-[Full protocol and episode logs](docs/libero-full.md).
-
-## Measured on IQ-9075
-
-On 20 matched LIBERO observations, the original ten-step model ran in **249.7 ms** median and **254.4 ms** p95 on dual HTP. That was **115.1×** faster than PyTorch CPU and **23.3×** faster than ONNX Runtime CPU on the same board. For the undistilled two-step model, the dual-HTP median was **173.1 ms**. Timing covers in-memory RGB to all 50 actions.
-
-The first ten actions had 0.46% relative L2 error against native LeRobot on CUDA for the original model. In the paired closed-loop pilot, native LeRobot succeeded in 33/40 episodes and dual HTP in 36/40.
-
-[Stage timings, action agreement and board pilot](docs/results.md) · [Two-step results](docs/distillation.md).
-
-## What runs where
-
-| Stage | Implementation |
-| --- | --- |
-| Observation and text | Host-side tokenizer, separable bilinear resize, checkpoint normalization and embedding lookup |
-| Vision encoder | Static single-view ONNX graph, with two camera views scheduled concurrently on separate HTPs |
-| Language prefill | Static partitions of up to six layers with grouped-query attention and per-layer K/V outputs |
-| Action expert | Static one-step graph reused across the configured denoising steps, reusing prefix projections and positional inputs |
-| Action output | Host-side action denormalization from the saved checkpoint statistics |
-
-The runtime uses QNN's FP16 path on HTP. Export preserves shapes and parameter values as loaded from the public checkpoint, serializes the flow timestep embeddings, and uses rescaled RMSNorm to keep its squared activations in FP16 range. The FP32 ONNX CPU timing uses the same exported graphs.
+The original 10-step model's first ten actions had 0.46% relative L2 error on dual HTP against native LeRobot on CUDA. In a separate matched 40-episode closed-loop pilot, native LeRobot succeeded in 33/40 episodes and dual HTP in 36/40. [Full LIBERO protocol and episode logs](docs/libero-full.md) · [Board pilot and action agreement](docs/results.md).
 
 ## Two-step distillation
 
