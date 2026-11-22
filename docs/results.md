@@ -36,6 +36,19 @@ Both HTP device nodes opened during the dual run.
 
 From single to dual HTP, vision latency fell **48.6%** and prefill stayed near 36 ms. The ORT CPU and HTP runs use the same 6+6+4 prefill partition and reuse cross-attention K/V projections and masks between denoising steps. Each stage has its own median. Cold initialization includes session creation and HTP graph finalization outside the warm inference timers.
 
+### Original-weight one- and two-step timing
+
+The two solver settings use the same pinned checkpoint, 50 predicted actions, dual HTP FP16, and the same 20 fixture files with three warm-ups. The two-step result was remeasured just before the one-step pass. Both runs use the first ten predictions for the execution-slice comparison.
+
+| Denoising steps | Median | p95 | Action Expert, median |
+| --- | ---: | ---: | ---: |
+| 2 | 173.6 ms | 182.1 ms | 20.6 ms |
+| 1 | 162.9 ms | 173.4 ms | 10.4 ms |
+
+One step reduced median latency by **6.2%** from two steps on matched inputs. The first ten actions differed from the original 10-step native CUDA outputs by 3.88% relative L2 with two steps and 7.14% with one step. This comparison includes the change in the Euler schedule.
+
+Export each bundle with `--flow-steps 1` or `--flow-steps 2`, then use the [board latency command](reproduce.md#latency-on-iq-9075) with `--engines dual --limit 20 --execute 10`. The [full LIBERO comparison](libero-full.md) measures success with ten executed actions per query. [One-step raw timings](../results/solver-steps/iq9075-1nfe.json) · [Two-step raw timings](../results/solver-steps/iq9075-2nfe.json) · [One-step export manifest](../results/solver-steps/export-1nfe.json).
+
 ### Unoptimized single-HTP FP16 reference
 
 The reference probe exports the original LeRobot `sample_actions` path as one static ONNX graph with two camera inputs and ten Euler steps. It uses the stock ONNX Runtime QNN provider with `device_id=0`, `enable_htp_fp16_precision=1` and CPU fallback disabled. Explicit integer casts preserve PyTorch's mask promotion at the 22 `CumSum` inputs in the ONNX export.

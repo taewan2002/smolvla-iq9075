@@ -13,6 +13,8 @@ The reference configuration is the original 10-step LeRobot graph on a single QN
 | QNN single HTP, FP16, unoptimized reference | 10 | Unavailable | — |
 | QNN single HTP, FP16, optimized export | 10 | 323.2 ms | 329.6 ms |
 | QNN dual HTP, FP16, optimized export | 10 | 249.7 ms | 254.4 ms |
+| QNN dual HTP, FP16, original weights | 2 | 173.6 ms | 182.1 ms |
+| QNN dual HTP, FP16, original weights | 1 | 162.9 ms | 173.4 ms |
 | QNN dual HTP, FP16, SnapFlow export | 1 | 164.1 ms | 167.2 ms |
 
 Using the same optimized export and ten denoising steps, dual HTP reduced median prediction latency from **323.2 to 249.7 ms (−22.7%)**. [Benchmark protocol and raw timings](docs/results.md).
@@ -40,15 +42,17 @@ The cosine blend reduced the p95 position-command jump from 0.850 to 0.235 relat
 
 ## Full LIBERO success rate
 
-Each column evaluates **2,000 episodes** across four LIBERO suites, using 50 published initial states per task and native LeRobot inference. All modes predict 50 actions. The published checkpoint's saved default executes all 50 before re-observing. The deployment configuration executes ten actions per query.
+Each column evaluates **2,000 episodes** across four LIBERO suites, using 50 published initial states per task and native LeRobot inference. All modes predict 50 actions. The published checkpoint's saved default executes all 50 before re-observing. The 10-, 2-, and 1-step solver settings execute ten actions per query with the original weights.
 
-| Suite | Checkpoint default (10-step, execute 50) | Original 10-step (execute 10) |
-| --- | ---: | ---: |
-| Spatial | 70.20% (351/500) | 87.80% (439/500) |
-| Object | 66.80% (334/500) | 90.60% (453/500) |
-| Goal | 78.40% (392/500) | 88.20% (441/500) |
-| Long | 47.00% (235/500) | 65.60% (328/500) |
-| **All** | 65.60% (1,312/2,000) | 83.05% (1,661/2,000) |
+| Suite | Checkpoint default (10 steps, execute 50) | 10 steps (execute 10) | 2 steps (execute 10) | 1 step (execute 10) |
+| --- | ---: | ---: | ---: | ---: |
+| Spatial | 70.20% (351/500) | 87.80% (439/500) | 85.60% (428/500) | 85.00% (425/500) |
+| Object | 66.80% (334/500) | 90.60% (453/500) | 91.20% (456/500) | 87.20% (436/500) |
+| Goal | 78.40% (392/500) | 88.20% (441/500) | 89.20% (446/500) | 85.00% (425/500) |
+| Long | 47.00% (235/500) | 65.60% (328/500) | 67.40% (337/500) | 63.60% (318/500) |
+| **All** | 65.60% (1,312/2,000) | 83.05% (1,661/2,000) | 83.35% (1,667/2,000) | 80.20% (1,604/2,000) |
+
+One step cut median latency by **6.2%** on matched inputs. Aggregate LIBERO success fell by **3.15 percentage points** from two steps. [Matched episodes and reproduction](docs/libero-full.md).
 
 The original 10-step model's first ten actions had 0.46% relative L2 error on dual HTP against native LeRobot on CUDA. In a separate matched 40-episode closed-loop pilot, native LeRobot succeeded in 33/40 episodes and dual HTP in 36/40. [Full LIBERO protocol and episode logs](docs/libero-full.md) · [Board pilot and action agreement](docs/results.md).
 

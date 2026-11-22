@@ -1,0 +1,140 @@
+{
+  "checkpoint_sha256": "9a9f6413e42c0f332fccbce9a0dc796af2790f82cf002f791cdbf7e01e1afca8",
+  "hardware": "NVIDIA RTX PRO 6000 Blackwell",
+  "inference": "native LeRobot",
+  "predicted_actions": 50,
+  "executed_actions": 10,
+  "episodes_per_step_count": 2000,
+  "one_step_initial_state_ranges": [
+    [
+      0,
+      12
+    ],
+    [
+      13,
+      25
+    ],
+    [
+      26,
+      37
+    ],
+    [
+      38,
+      49
+    ]
+  ],
+  "one_step_initial_observation_reruns": [
+    {
+      "suite": "libero_spatial",
+      "task": 6,
+      "init": 13,
+      "batch_size": 1,
+      "before": "f1efeebf953a485fa1628aa9cf3624a5da742ce8b0929e9d441115fc02b6c2af",
+      "after": "ab892cb89373d31f4009bef05108ed338e95ff4ad192bb0d36326ebb365e65f7"
+    }
+  ],
+  "one_step_vs_two_step": {
+    "libero_10": {
+      "episodes": 500,
+      "baseline_successes": 337,
+      "candidate_successes": 318,
+      "delta_percentage_points": -3.8,
+      "both_success": 280,
+      "baseline_only": 57,
+      "candidate_only": 38,
+      "both_failed": 125
+    },
+    "libero_goal": {
+      "episodes": 500,
+      "baseline_successes": 446,
+      "candidate_successes": 425,
+      "delta_percentage_points": -4.2,
+      "both_success": 407,
+      "baseline_only": 39,
+      "candidate_only": 18,
+      "both_failed": 36
+    },
+    "libero_object": {
+      "episodes": 500,
+      "baseline_successes": 456,
+      "candidate_successes": 436,
+      "delta_percentage_points": -4.0,
+      "both_success": 424,
+      "baseline_only": 32,
+      "candidate_only": 12,
+      "both_failed": 32
+    },
+    "libero_spatial": {
+      "episodes": 500,
+      "baseline_successes": 428,
+      "candidate_successes": 425,
+      "delta_percentage_points": -0.6,
+      "both_success": 399,
+      "baseline_only": 29,
+      "candidate_only": 26,
+      "both_failed": 46
+    },
+    "all": {
+      "episodes": 2000,
+      "baseline_successes": 1667,
+      "candidate_successes": 1604,
+      "delta_percentage_points": -3.15,
+      "both_success": 1510,
+      "baseline_only": 157,
+      "candidate_only": 94,
+      "both_failed": 239
+    }
+  },
+  "one_step_vs_ten_step": {
+    "libero_10": {
+      "episodes": 500,
+      "baseline_successes": 328,
+      "candidate_successes": 318,
+      "delta_percentage_points": -2.0,
+      "both_success": 268,
+      "baseline_only": 60,
+      "candidate_only": 50,
+      "both_failed": 122
+    },
+    "libero_goal": {
+      "episodes": 500,
+      "baseline_successes": 441,
+      "candidate_successes": 425,
+      "delta_percentage_points": -3.2,
+      "both_success": 401,
+      "baseline_only": 40,
+      "candidate_only": 24,
+      "both_failed": 35
+    },
+    "libero_object": {
+      "episodes": 500,
+      "baseline_successes": 453,
+      "candidate_successes": 436,
+      "delta_percentage_points": -3.4,
+      "both_success": 418,
+      "baseline_only": 35,
+      "candidate_only": 18,
+      "both_failed": 29
+    },
+    "libero_spatial": {
+      "episodes": 500,
+      "baseline_successes": 439,
+      "candidate_successes": 425,
+      "delta_percentage_points": -2.8,
+      "both_success": 404,
+      "baseline_only": 35,
+      "candidate_only": 21,
+      "both_failed": 40
+    },
+    "all": {
+      "episodes": 2000,
+      "baseline_successes": 1661,
+      "candidate_successes": 1604,
+      "delta_percentage_points": -2.85,
+      "both_success": 1491,
+      "baseline_only": 170,
+      "candidate_only": 113,
+      "both_failed": 226
+    }
+  }
+}
