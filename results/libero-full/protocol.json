@@ -1,0 +1,41 @@
+{
+  "libero_revision": "8f1084e3132a39270c3a13ebe37270a43ece2a01",
+  "lerobot_source_revision": "8fff0fde7c79f23a93d845d1a50e985de01f8b8a",
+  "checkpoint_repo": "HuggingFaceVLA/smolvla_libero",
+  "checkpoint_revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
+  "teacher_checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "student_checkpoint_sha256": "0fa9df66bceb7ff3467bd1f06ccaf042f3c8c0b4c59f843be7a39df1eb8ef7fa",
+  "hardware": "NVIDIA RTX PRO 6000 Blackwell",
+  "torch": "2.7.1+cu128",
+  "transformers": "4.51.3",
+  "mujoco": "2.3.7",
+  "robosuite": "1.4.1",
+  "suites": [
+    "libero_spatial",
+    "libero_object",
+    "libero_goal",
+    "libero_10"
+  ],
+  "control_tick_caps": [
+    280,
+    280,
+    300,
+    520
+  ],
+  "tasks_per_suite": 10,
+  "initial_states_per_task": 50,
+  "matched_initial_observations": 2000,
+  "seed_formula": "47000 + 10000 * suite_index + 100 * task_id + initial_state_index",
+  "camera_size_per_view": [
+    256,
+    256
+  ],
+  "executed_actions": 10,
+  "predicted_actions": 50,
+  "main_batch_size_limit": 12,
+  "simulator_warmup_ticks": 10,
+  "matched_reruns_by_isolation": {
+    "fresh_batched": 108,
+    "fresh_serial": 2
+  }
+}

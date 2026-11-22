@@ -33,6 +33,8 @@ def serve(policy, port):
         "checkpoint_sha256": policy.manifest["checkpoint_sha256"],
         "backend": policy.backend,
     }
+    if "denoising_steps" in policy.manifest:
+        manifest["denoising_steps"] = policy.manifest["denoising_steps"]
 
     class Handler(BaseHTTPRequestHandler):
         def send_bytes(self, payload, media):

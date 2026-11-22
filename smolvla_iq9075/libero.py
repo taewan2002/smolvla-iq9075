@@ -100,6 +100,7 @@ def main():
     parser.add_argument("--bundle", type=Path)
     parser.add_argument("--url")
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--flow-steps", type=int, help="Override Euler steps for a native control run")
     parser.add_argument("--execute", type=int, default=1)
     parser.add_argument("--inits", type=int, default=1)
     parser.add_argument("--init-start", type=int, default=0)
@@ -109,11 +110,16 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.tasks <= 10 or args.inits < 1 or args.init_start < 0 or args.execute < 1:
         parser.error("Invalid task, initial-state or execution count")
+    if args.flow_steps is not None and (args.engine != "native" or args.flow_steps < 1):
+        parser.error("--flow-steps requires the native engine and a positive step count")
     if args.engine == "native":
         if bool(args.checkpoint) != bool(args.vlm):
             parser.error("Supply both --checkpoint and --vlm or neither")
         checkpoint, vlm = (args.checkpoint, args.vlm) if args.checkpoint else snapshots()
         policy = NativePolicy(checkpoint, vlm, args.device)
+        if args.flow_steps is not None:
+            policy.policy.model.config.num_steps = args.flow_steps
+        denoising_steps = policy.policy.model.config.num_steps
         checkpoint_sha = sha256(checkpoint / "model.safetensors")
         backend = f"torch-{args.device}"
     elif args.engine == "remote":
@@ -122,6 +128,7 @@ def main():
         if not args.url:
             parser.error("--url is required in remote mode")
         policy = RemotePolicy(args.url)
+        denoising_steps = policy.manifest.get("denoising_steps")
         checkpoint_sha = policy.manifest["checkpoint_sha256"]
         backend = policy.manifest["backend"]
     else:
@@ -130,6 +137,7 @@ def main():
         if not args.bundle:
             parser.error("--bundle is required with a local ONNX engine")
         policy = EdgePolicy(args.bundle, args.engine)
+        denoising_steps = policy.manifest.get("denoising_steps")
         checkpoint_sha = policy.manifest["checkpoint_sha256"]
         backend = policy.backend
     if args.execute > policy.action_shape[1]:
@@ -155,6 +163,8 @@ def main():
                                "instruction": task.language, "engine": args.engine, "backend": backend,
                                "checkpoint_sha256": checkpoint_sha,
                                "bddl_sha256": sha256(asset), "init_states_sha256": sha256(states)}
+                        if denoising_steps is not None:
+                            row["denoising_steps"] = denoising_steps
                         file = args.save_fixtures / f"{name}-{task_id:02d}-{init:02d}.npz" if args.save_fixtures else None
                         result = episode(asset, states, row, policy, args.execute, file)
                         print(json.dumps(result), file=log, flush=True)

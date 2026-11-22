@@ -70,3 +70,19 @@ class NativePolicy:
                 self.pre(batch), noise=torch.from_numpy(noise).to(self.device)
             )
             return self.post(action).cpu().numpy()
+
+    def predict_batch(self, rgb, state, task, noise):
+        import numpy as np
+
+        torch = self.torch
+        inputs = {
+            key: torch.from_numpy(np.stack([views[index] for views in rgb])).permute(0, 3, 1, 2).float().div_(255)
+            for index, key in enumerate(self.image_keys)
+        }
+        inputs["observation.state"] = torch.as_tensor(state, dtype=torch.float32)
+        inputs["task"] = task
+        with torch.inference_mode():
+            action = self.policy.predict_action_chunk(
+                self.pre(inputs), noise=torch.from_numpy(noise).to(self.device)
+            )
+            return self.post(action).cpu().numpy()

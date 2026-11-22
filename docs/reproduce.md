@@ -73,6 +73,8 @@ The runner uses four PyTorch threads and verifies the native checkpoint SHA-256 
 
 ## Run closed-loop LIBERO with the board
 
+The [full native LeRobot benchmark](libero-full.md) provides the batched, 2,000-episode evaluation commands.
+
 On IQ-9075, start the inference service. It listens on loopback. Add `--serve-port 18075` to the timing command to serve from the final engine and reuse the loaded sessions.
 
 ```bash

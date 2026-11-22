@@ -1,0 +1,87 @@
+{
+  "libero_spatial": {
+    "teacher": {
+      "successes": 334,
+      "episodes": 500,
+      "rate_percent": 66.8
+    },
+    "undistilled": {
+      "successes": 402,
+      "episodes": 500,
+      "rate_percent": 80.4
+    },
+    "distilled": {
+      "successes": 295,
+      "episodes": 500,
+      "rate_percent": 59.0
+    }
+  },
+  "libero_object": {
+    "teacher": {
+      "successes": 449,
+      "episodes": 500,
+      "rate_percent": 89.8
+    },
+    "undistilled": {
+      "successes": 486,
+      "episodes": 500,
+      "rate_percent": 97.2
+    },
+    "distilled": {
+      "successes": 451,
+      "episodes": 500,
+      "rate_percent": 90.2
+    }
+  },
+  "libero_goal": {
+    "teacher": {
+      "successes": 383,
+      "episodes": 500,
+      "rate_percent": 76.6
+    },
+    "undistilled": {
+      "successes": 433,
+      "episodes": 500,
+      "rate_percent": 86.6
+    },
+    "distilled": {
+      "successes": 373,
+      "episodes": 500,
+      "rate_percent": 74.6
+    }
+  },
+  "libero_10": {
+    "teacher": {
+      "successes": 185,
+      "episodes": 500,
+      "rate_percent": 37.0
+    },
+    "undistilled": {
+      "successes": 247,
+      "episodes": 500,
+      "rate_percent": 49.4
+    },
+    "distilled": {
+      "successes": 206,
+      "episodes": 500,
+      "rate_percent": 41.2
+    }
+  },
+  "all": {
+    "teacher": {
+      "successes": 1351,
+      "episodes": 2000,
+      "rate_percent": 67.55
+    },
+    "undistilled": {
+      "successes": 1568,
+      "episodes": 2000,
+      "rate_percent": 78.4
+    },
+    "distilled": {
+      "successes": 1325,
+      "episodes": 2000,
+      "rate_percent": 66.25
+    }
+  }
+}

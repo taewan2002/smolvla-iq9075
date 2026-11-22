@@ -16,14 +16,22 @@ def read(path):
     return rows
 
 
-def compare(baseline, candidate):
+def compare(baseline, candidate, lineage=None):
     if not baseline or baseline.keys() != candidate.keys():
         raise ValueError("Both result files require the same nonempty episode set")
     suites = {}
     for key, base in baseline.items():
         edge = candidate[key]
-        for field in ("seed", "initial_sha256", "execute", "checkpoint_sha256",
-                      "bddl_sha256", "init_states_sha256"):
+        if lineage is None:
+            hashes = (base["checkpoint_sha256"], base["checkpoint_sha256"])
+        else:
+            hashes = (lineage["teacher_checkpoint_sha256"], lineage["student_checkpoint_sha256"])
+            for row, field in ((base, "teacher_steps"), (edge, "student_steps")):
+                if row.get("denoising_steps", lineage[field]) != lineage[field]:
+                    raise ValueError(f"Mismatched denoising_steps in episode {key}")
+        if (base["checkpoint_sha256"], edge["checkpoint_sha256"]) != hashes:
+            raise ValueError(f"Mismatched checkpoint_sha256 in episode {key}")
+        for field in ("seed", "initial_sha256", "execute", "bddl_sha256", "init_states_sha256"):
             if base[field] != edge[field]:
                 raise ValueError(f"Mismatched {field} in episode {key}")
         label = {(True, True): "both_success", (True, False): "baseline_only",
@@ -47,8 +55,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", type=Path)
     parser.add_argument("candidate", type=Path)
+    parser.add_argument("--distillation", type=Path, help="Teacher/student lineage from distill.py")
     args = parser.parse_args()
-    print(json.dumps(compare(read(args.baseline), read(args.candidate)), indent=2))
+    lineage = json.loads(args.distillation.read_text()) if args.distillation else None
+    print(json.dumps(compare(read(args.baseline), read(args.candidate), lineage), indent=2))
 
 
 if __name__ == "__main__":

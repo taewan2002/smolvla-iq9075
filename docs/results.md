@@ -36,7 +36,9 @@ Relative L2 is the pooled L2 norm of the output difference divided by the pooled
 
 The dual HTP mean absolute error was 0.00328 for the first 10 actions and 0.00657 across all 50. The full-chunk error is sensitive to large gripper differences in the later part of the prediction. In the FP32 export check, for example, the largest difference was 1.99 on the gripper dimension at action index 39 for Goal task 1 (zero-based). The paired rollouts execute the first 10 actions, and the full-chunk results matter for applications using a longer execution horizon.
 
-## Closed-loop LIBERO protocol
+## Closed-loop IQ-9075 pilot
+
+See the [full native LeRobot evaluation](libero-full.md) for the 2,000-episode policy scores.
 
 The native comparison uses LeRobot v0.4.4 on an NVIDIA RTX PRO 6000 Blackwell. The IQ-9075 candidate uses dual HTP through the same export as the latency study. The same GPU host renders both runs. The separate PyTorch CPU timing run uses the board. Both backends receive the same task, initial state, action noise seed and simulator settings. Each suite uses all ten tasks with initial-state index 0. Actions use LIBERO's relative controller, and each run allows 280, 280, 300 or 520 action ticks for Spatial, Object, Goal or Long respectively, after ten warm-up ticks.
 

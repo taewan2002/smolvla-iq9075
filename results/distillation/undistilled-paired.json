@@ -1,0 +1,52 @@
+{
+  "libero_spatial": {
+    "episodes": 10,
+    "baseline_successes": 8,
+    "candidate_successes": 9,
+    "delta_percentage_points": 10.0,
+    "both_success": 7,
+    "baseline_only": 1,
+    "candidate_only": 2,
+    "both_failed": 0
+  },
+  "libero_object": {
+    "episodes": 10,
+    "baseline_successes": 9,
+    "candidate_successes": 10,
+    "delta_percentage_points": 10.0,
+    "both_success": 9,
+    "baseline_only": 0,
+    "candidate_only": 1,
+    "both_failed": 0
+  },
+  "libero_goal": {
+    "episodes": 10,
+    "baseline_successes": 6,
+    "candidate_successes": 9,
+    "delta_percentage_points": 30.0,
+    "both_success": 6,
+    "baseline_only": 0,
+    "candidate_only": 3,
+    "both_failed": 1
+  },
+  "libero_10": {
+    "episodes": 10,
+    "baseline_successes": 3,
+    "candidate_successes": 5,
+    "delta_percentage_points": 20.0,
+    "both_success": 2,
+    "baseline_only": 1,
+    "candidate_only": 3,
+    "both_failed": 4
+  },
+  "all": {
+    "episodes": 40,
+    "baseline_successes": 26,
+    "candidate_successes": 33,
+    "delta_percentage_points": 17.5,
+    "both_success": 24,
+    "baseline_only": 2,
+    "candidate_only": 9,
+    "both_failed": 5
+  }
+}

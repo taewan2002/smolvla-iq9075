@@ -1,0 +1,24 @@
+{
+  "teacher_checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "teacher_steps": 10,
+  "student_steps": 2,
+  "updates": 200,
+  "batch": 8,
+  "learning_rate": 1e-05,
+  "seed": 47000,
+  "prediction_actions": 50,
+  "demo_files": 40,
+  "train_demos": 1600,
+  "heldout_demos": 400,
+  "undistilled_2step": {
+    "observations": 64,
+    "first10_relative_l2": 0.2234618365764618,
+    "full_relative_l2": 0.2554765045642853
+  },
+  "distilled_2step": {
+    "observations": 64,
+    "first10_relative_l2": 0.14354519546031952,
+    "full_relative_l2": 0.1926315575838089
+  },
+  "student_checkpoint_sha256": "0fa9df66bceb7ff3467bd1f06ccaf042f3c8c0b4c59f843be7a39df1eb8ef7fa"
+}

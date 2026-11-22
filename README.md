@@ -4,11 +4,25 @@ An ONNX exporter, dual-HTP runtime and paired LIBERO benchmark for the public [S
 
 [Reproduce the evaluation](docs/reproduce.md) covers installation, model export, board latency measurement and closed-loop evaluation. The board accepts two RGB arrays, task text, low-dimensional state and a reproducible initial noise tensor. It returns a full action chunk that LIBERO can execute in simulation.
 
+## Full LIBERO success rate
+
+Each policy evaluated **2,000 episodes** across four LIBERO suites, with 50 published initial states per task. All three use native LeRobot inference with 50 predicted actions and ten executed per query.
+
+| Suite | Original 10-step | Undistilled 2-step | Distilled 2-step |
+| --- | ---: | ---: | ---: |
+| Spatial | 66.80% (334/500) | 80.40% (402/500) | 59.00% (295/500) |
+| Object | 89.80% (449/500) | 97.20% (486/500) | 90.20% (451/500) |
+| Goal | 76.60% (383/500) | 86.60% (433/500) | 74.60% (373/500) |
+| Long | 37.00% (185/500) | 49.40% (247/500) | 41.20% (206/500) |
+| **All** | 67.55% (1,351/2,000) | **78.40% (1,568/2,000)** | 66.25% (1,325/2,000) |
+
+[Full protocol and episode logs](docs/libero-full.md).
+
 ## Measured on IQ-9075
 
 On 20 matched LIBERO observations, dual HTP ran in **394.1 ms** median and **405.2 ms** p95. On the same IQ-9075, eager LeRobot took **42.7 s** median (**108.3×** slower), and ORT CPU took **5,958.1 ms** with the same exported graphs (**15.1×** slower). Running the two camera views on separate HTPs reduced median vision latency from 148.8 to 76.5 ms compared with a single HTP.
 
-Closed-loop LIBERO success was **26/40 (65%)** for native LeRobot and **26/40 (65%)** for IQ-9075 dual HTP. The pilot used one published initial state per task across four suites. Both backends predicted 50 actions and executed 10 per query. On the 20 fixed observations, relative L2 error for those first 10 actions was **1.44%**.
+On the 20 fixed observations, relative L2 error for the first ten actions was **1.44%**. The board also ran a separate 40-episode closed-loop pilot. [IQ-9075 measurements](docs/results.md).
 
 See [benchmark results](docs/results.md) for stage timings, suite results, full-chunk action error and raw measurements.
 
@@ -23,6 +37,10 @@ See [benchmark results](docs/results.md) for stage timings, suite results, full-
 | Action output | Host-side action denormalization from the saved checkpoint statistics |
 
 The runtime uses QNN's FP16 path on HTP. Export preserves shapes and parameter values as loaded from the public checkpoint, serializes the flow timestep embeddings, and uses rescaled RMSNorm to keep its squared activations in FP16 range. The FP32 ONNX CPU timing uses the same exported graphs.
+
+## Two-step distillation
+
+Train an Action Expert that samples in two calls and compare it with the original ten-step policy and an untrained two-step control. See the [distillation recipe](docs/distillation.md).
 
 ## Use another checkpoint
 
